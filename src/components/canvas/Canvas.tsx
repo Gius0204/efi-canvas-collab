@@ -1,12 +1,12 @@
 
 import React, { useRef, useState, useEffect } from 'react';
-import { fabric } from 'fabric';
+import { Canvas as FabricCanvas, Circle, Group, Line, Rect, Shadow, TextBox, Triangle } from 'fabric';
 import CanvasToolbar from './CanvasToolbar';
 import { Minus, Plus } from 'lucide-react';
 
 const Canvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [fabricCanvas, setFabricCanvas] = useState<fabric.Canvas | null>(null);
+  const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
   const [activeTool, setActiveTool] = useState('');
   const [zoom, setZoom] = useState(1);
   const [showPenOptions, setShowPenOptions] = useState(false);
@@ -17,7 +17,7 @@ const Canvas: React.FC = () => {
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    const canvas = new fabric.Canvas(canvasRef.current, {
+    const canvas = new FabricCanvas(canvasRef.current, {
       width: window.innerWidth,
       height: window.innerHeight - 60, // Adjust for header
       backgroundColor: '#f8f9fa',
@@ -33,7 +33,7 @@ const Canvas: React.FC = () => {
       for (let j = 0; j < canvas.height! / gridSize; j++) {
         if ((i + j) % 2 === 0) {
           canvas.add(
-            new fabric.Circle({
+            new Circle({
               left: i * gridSize,
               top: j * gridSize,
               radius: 1,
@@ -108,7 +108,7 @@ const Canvas: React.FC = () => {
   const addStickyNote = (color: string) => {
     if (!fabricCanvas) return;
 
-    const rect = new fabric.Rect({
+    const rect = new Rect({
       left: fabricCanvas.width! / 2 - 75,
       top: fabricCanvas.height! / 2 - 75,
       width: 150,
@@ -118,7 +118,7 @@ const Canvas: React.FC = () => {
       strokeWidth: 1,
       rx: 5,
       ry: 5,
-      shadow: new fabric.Shadow({
+      shadow: new Shadow({
         color: 'rgba(0,0,0,0.2)',
         blur: 5,
         offsetX: 2,
@@ -126,7 +126,7 @@ const Canvas: React.FC = () => {
       })
     });
 
-    const text = new fabric.Textbox('Double click to edit', {
+    const text = new TextBox('Double click to edit', {
       left: fabricCanvas.width! / 2 - 65,
       top: fabricCanvas.height! / 2 - 65,
       width: 130,
@@ -136,7 +136,7 @@ const Canvas: React.FC = () => {
       editable: true
     });
 
-    const group = new fabric.Group([rect, text], {
+    const group = new Group([rect, text], {
       left: fabricCanvas.width! / 2 - 75,
       top: fabricCanvas.height! / 2 - 75,
       cornerSize: 8,
@@ -156,7 +156,7 @@ const Canvas: React.FC = () => {
   const addCircle = () => {
     if (!fabricCanvas) return;
 
-    const circle = new fabric.Circle({
+    const circle = new Circle({
       left: fabricCanvas.width! / 2 - 50,
       top: fabricCanvas.height! / 2 - 50,
       radius: 50,
@@ -180,7 +180,7 @@ const Canvas: React.FC = () => {
   const addRectangle = () => {
     if (!fabricCanvas) return;
 
-    const rect = new fabric.Rect({
+    const rect = new Rect({
       left: fabricCanvas.width! / 2 - 50,
       top: fabricCanvas.height! / 2 - 50,
       width: 100,
@@ -207,7 +207,7 @@ const Canvas: React.FC = () => {
   const addTriangle = () => {
     if (!fabricCanvas) return;
 
-    const triangle = new fabric.Triangle({
+    const triangle = new Triangle({
       left: fabricCanvas.width! / 2 - 50,
       top: fabricCanvas.height! / 2 - 50,
       width: 100,
@@ -232,7 +232,7 @@ const Canvas: React.FC = () => {
   const addArrow = () => {
     if (!fabricCanvas) return;
 
-    const line = new fabric.Line([50, 100, 200, 100], {
+    const line = new Line([50, 100, 200, 100], {
       left: fabricCanvas.width! / 2 - 100,
       top: fabricCanvas.height! / 2,
       stroke: '#000',
@@ -243,7 +243,7 @@ const Canvas: React.FC = () => {
       borderColor: '#0075ff'
     });
 
-    const triangle = new fabric.Triangle({
+    const triangle = new Triangle({
       left: fabricCanvas.width! / 2 + 90,
       top: fabricCanvas.height! / 2 - 5,
       width: 10,
@@ -257,7 +257,7 @@ const Canvas: React.FC = () => {
       borderColor: '#0075ff'
     });
 
-    const group = new fabric.Group([line, triangle], {
+    const group = new Group([line, triangle], {
       left: fabricCanvas.width! / 2 - 100,
       top: fabricCanvas.height! / 2 - 5,
       cornerSize: 8,
@@ -277,7 +277,7 @@ const Canvas: React.FC = () => {
   const addText = () => {
     if (!fabricCanvas) return;
 
-    const text = new fabric.Textbox('Double click to edit text', {
+    const text = new TextBox('Double click to edit text', {
       left: fabricCanvas.width! / 2 - 100,
       top: fabricCanvas.height! / 2 - 15,
       width: 200,
@@ -302,7 +302,7 @@ const Canvas: React.FC = () => {
   const addSection = () => {
     if (!fabricCanvas) return;
 
-    const rect = new fabric.Rect({
+    const rect = new Rect({
       left: fabricCanvas.width! / 2 - 150,
       top: fabricCanvas.height! / 2 - 100,
       width: 300,
@@ -318,7 +318,7 @@ const Canvas: React.FC = () => {
       borderColor: '#0075ff'
     });
 
-    const text = new fabric.Textbox('Section Title', {
+    const text = new TextBox('Section Title', {
       left: fabricCanvas.width! / 2 - 140,
       top: fabricCanvas.height! / 2 - 90,
       width: 280,
@@ -329,7 +329,7 @@ const Canvas: React.FC = () => {
       editable: true
     });
 
-    const group = new fabric.Group([rect, text], {
+    const group = new Group([rect, text], {
       left: fabricCanvas.width! / 2 - 150,
       top: fabricCanvas.height! / 2 - 100,
       cornerSize: 8,
