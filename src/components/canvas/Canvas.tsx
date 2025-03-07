@@ -1,7 +1,9 @@
+
 import React, { useRef, useState, useEffect } from 'react';
 import { Canvas as FabricCanvas, Circle, Group, Line, Rect, Shadow, Textbox, Triangle } from 'fabric';
 import CanvasToolbar from './CanvasToolbar';
 import { Minus, Plus } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const Canvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -51,11 +53,34 @@ const Canvas: React.FC = () => {
       canvas.renderAll();
     };
 
+    // Add mouse wheel zoom support
+    const handleWheel = (e: WheelEvent) => {
+      if (e.ctrlKey) {
+        e.preventDefault();
+        const delta = e.deltaY;
+        let zoomLevel = canvas.getZoom();
+        
+        if (delta > 0) {
+          zoomLevel = Math.max(0.3, zoomLevel - 0.05);
+        } else {
+          zoomLevel = Math.min(5, zoomLevel + 0.05);
+        }
+        
+        setZoom(zoomLevel);
+        canvas.setZoom(zoomLevel);
+        canvas.renderAll();
+      }
+    };
+
+    canvasRef.current.addEventListener('wheel', handleWheel, { passive: false });
     window.addEventListener('resize', handleResize);
 
     return () => {
       canvas.dispose();
       window.removeEventListener('resize', handleResize);
+      if (canvasRef.current) {
+        canvasRef.current.removeEventListener('wheel', handleWheel);
+      }
     };
   }, []);
 
@@ -68,7 +93,7 @@ const Canvas: React.FC = () => {
       case 'pen':
       case 'marker':
         fabricCanvas.isDrawingMode = true;
-        fabricCanvas.freeDrawingBrush.width = 2;
+        fabricCanvas.freeDrawingBrush.width = activeTool === 'marker' ? 4 : 2;
         fabricCanvas.freeDrawingBrush.color = '#000000';
         break;
       case 'eraser':
@@ -77,7 +102,7 @@ const Canvas: React.FC = () => {
         fabricCanvas.freeDrawingBrush.color = fabricCanvas.backgroundColor as string;
         break;
       case 'sticky':
-        addStickyNote('#f1c40f');
+        // Do nothing - now handled by the sticky color selection
         break;
       case 'circle':
         addCircle();
@@ -143,8 +168,6 @@ const Canvas: React.FC = () => {
     fabricCanvas.add(group);
     fabricCanvas.setActiveObject(group);
     fabricCanvas.renderAll();
-    
-    setActiveTool('');
   };
 
   const addCircle = () => {
@@ -356,41 +379,57 @@ const Canvas: React.FC = () => {
     }
   };
 
+  const handleStickyColorSelect = (color: string) => {
+    addStickyNote(color);
+    setShowStickyOptions(false);
+    setActiveTool('');
+  };
+
   return (
-    <div className="relative h-full w-full">
-      <canvas ref={canvasRef} className="absolute top-0 left-0" />
-      
-      <CanvasToolbar 
-        activeTool={activeTool}
-        setActiveTool={setActiveTool}
-        showPenOptions={showPenOptions}
-        setShowPenOptions={setShowPenOptions}
-        showStickyOptions={showStickyOptions}
-        setShowStickyOptions={setShowStickyOptions}
-        showShapesOptions={showShapesOptions}
-        setShowShapesOptions={setShowShapesOptions}
-      />
-      
-      <div className="fixed bottom-6 right-6 flex flex-col space-y-2">
-        <div className="bg-white rounded-md shadow-md p-2 flex flex-col items-center">
-          <button 
-            onClick={handleZoomIn}
-            className="p-1 hover:bg-gray-100 rounded-md"
-          >
-            <Plus className="h-5 w-5" />
-          </button>
-          <div className="my-1 text-sm font-medium">
-            {Math.round(zoom * 100)}%
-          </div>
-          <button 
-            onClick={handleZoomOut}
-            className="p-1 hover:bg-gray-100 rounded-md"
-          >
-            <Minus className="h-5 w-5" />
-          </button>
+    <TooltipProvider>
+      <div className="relative h-full w-full">
+        <canvas ref={canvasRef} className="absolute top-0 left-0" />
+        
+        <CanvasToolbar 
+          activeTool={activeTool}
+          setActiveTool={setActiveTool}
+          showPenOptions={showPenOptions}
+          setShowPenOptions={setShowPenOptions}
+          showStickyOptions={showStickyOptions}
+          setShowStickyOptions={setShowStickyOptions}
+          showShapesOptions={showShapesOptions}
+          setShowShapesOptions={setShowShapesOptions}
+          onStickyColorSelect={handleStickyColorSelect}
+        />
+        
+        <div className="fixed bottom-6 right-6 flex flex-col space-y-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="bg-white rounded-md shadow-md p-2 flex flex-col items-center">
+                <button 
+                  onClick={handleZoomIn}
+                  className="p-1 hover:bg-gray-100 rounded-md"
+                >
+                  <Plus className="h-5 w-5" />
+                </button>
+                <div className="my-1 text-sm font-medium">
+                  {Math.round(zoom * 100)}%
+                </div>
+                <button 
+                  onClick={handleZoomOut}
+                  className="p-1 hover:bg-gray-100 rounded-md"
+                >
+                  <Minus className="h-5 w-5" />
+                </button>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="left">
+              <p>Zoom (Ctrl+Scroll to zoom)</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 };
 
