@@ -1,6 +1,5 @@
-
 import React, { useRef, useState, useEffect } from 'react';
-import { Canvas as FabricCanvas, Circle, Group, Line, Rect, Shadow, TextBox, Triangle } from 'fabric';
+import { Canvas as FabricCanvas, Circle, Group, Line, Rect, Shadow, Textbox, Triangle } from 'fabric';
 import CanvasToolbar from './CanvasToolbar';
 import { Minus, Plus } from 'lucide-react';
 
@@ -13,13 +12,12 @@ const Canvas: React.FC = () => {
   const [showStickyOptions, setShowStickyOptions] = useState(false);
   const [showShapesOptions, setShowShapesOptions] = useState(false);
 
-  // Initialize fabric canvas
   useEffect(() => {
     if (!canvasRef.current) return;
 
     const canvas = new FabricCanvas(canvasRef.current, {
       width: window.innerWidth,
-      height: window.innerHeight - 60, // Adjust for header
+      height: window.innerHeight - 60,
       backgroundColor: '#f8f9fa',
       selection: true,
       preserveObjectStacking: true,
@@ -27,7 +25,6 @@ const Canvas: React.FC = () => {
       stopContextMenu: true,
     });
 
-    // Add grid pattern
     const gridSize = 20;
     for (let i = 0; i < canvas.width! / gridSize; i++) {
       for (let j = 0; j < canvas.height! / gridSize; j++) {
@@ -62,11 +59,9 @@ const Canvas: React.FC = () => {
     };
   }, []);
 
-  // Handle tool changes
   useEffect(() => {
     if (!fabricCanvas) return;
 
-    // Reset canvas drawing mode
     fabricCanvas.isDrawingMode = false;
 
     switch (activeTool) {
@@ -126,7 +121,7 @@ const Canvas: React.FC = () => {
       })
     });
 
-    const text = new TextBox('Double click to edit', {
+    const text = new Textbox('Double click to edit', {
       left: fabricCanvas.width! / 2 - 65,
       top: fabricCanvas.height! / 2 - 65,
       width: 130,
@@ -149,7 +144,6 @@ const Canvas: React.FC = () => {
     fabricCanvas.setActiveObject(group);
     fabricCanvas.renderAll();
     
-    // Reset active tool after adding
     setActiveTool('');
   };
 
@@ -173,7 +167,6 @@ const Canvas: React.FC = () => {
     fabricCanvas.setActiveObject(circle);
     fabricCanvas.renderAll();
     
-    // Reset active tool after adding
     setActiveTool('');
   };
 
@@ -200,7 +193,6 @@ const Canvas: React.FC = () => {
     fabricCanvas.setActiveObject(rect);
     fabricCanvas.renderAll();
     
-    // Reset active tool after adding
     setActiveTool('');
   };
 
@@ -225,7 +217,6 @@ const Canvas: React.FC = () => {
     fabricCanvas.setActiveObject(triangle);
     fabricCanvas.renderAll();
     
-    // Reset active tool after adding
     setActiveTool('');
   };
 
@@ -270,14 +261,13 @@ const Canvas: React.FC = () => {
     fabricCanvas.setActiveObject(group);
     fabricCanvas.renderAll();
     
-    // Reset active tool after adding
     setActiveTool('');
   };
 
   const addText = () => {
     if (!fabricCanvas) return;
 
-    const text = new TextBox('Double click to edit text', {
+    const text = new Textbox('Double click to edit text', {
       left: fabricCanvas.width! / 2 - 100,
       top: fabricCanvas.height! / 2 - 15,
       width: 200,
@@ -295,7 +285,6 @@ const Canvas: React.FC = () => {
     fabricCanvas.setActiveObject(text);
     fabricCanvas.renderAll();
     
-    // Reset active tool after adding
     setActiveTool('');
   };
 
@@ -318,7 +307,7 @@ const Canvas: React.FC = () => {
       borderColor: '#0075ff'
     });
 
-    const text = new TextBox('Section Title', {
+    const text = new Textbox('Section Title', {
       left: fabricCanvas.width! / 2 - 140,
       top: fabricCanvas.height! / 2 - 90,
       width: 280,
@@ -342,7 +331,6 @@ const Canvas: React.FC = () => {
     fabricCanvas.setActiveObject(group);
     fabricCanvas.renderAll();
     
-    // Reset active tool after adding
     setActiveTool('');
   };
 
