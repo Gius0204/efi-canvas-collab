@@ -2,560 +2,377 @@
 import React, { useState } from 'react';
 import { 
   Users, 
-  Clock, 
-  CheckSquare, 
-  Sparkles, 
-  MessageCircle, 
+  MessageSquare, 
+  TimerReset, 
+  Vote, 
+  Settings, 
   Share2, 
-  Link2,
-  Search,
-  UserPlus,
-  X
+  EyeOff, 
+  CalendarClock, 
+  UserPlus, 
+  ChevronDown,
+  Sparkles,
+  Inbox,
+  LayoutTemplate
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import UserAvatar from '@/components/UserAvatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { toast } from 'sonner';
 
 interface CollaborationToolbarProps {
-  className?: string;
-  onShowVotingResults?: () => void;
-  onShowAIGenerator?: () => void;
-  onShowComments?: () => void;
-  onShowSharing?: () => void;
+  onShowVotingResults: () => void;
+  onShowAIGenerator: () => void;
+  onShowComments: () => void;
+  onShowSharing: () => void;
+  onShowEficientisIntegration: () => void;
+  onShowTemplates: () => void;
 }
 
-const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({ 
-  className,
+const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
   onShowVotingResults,
   onShowAIGenerator,
   onShowComments,
-  onShowSharing
+  onShowSharing,
+  onShowEficientisIntegration,
+  onShowTemplates
 }) => {
-  const [showCollaborators, setShowCollaborators] = useState(false);
-  const [showGroups, setShowGroups] = useState(false);
+  const [showAuthors, setShowAuthors] = useState(true);
   const [showTimer, setShowTimer] = useState(false);
-  const [showVoting, setShowVoting] = useState(false);
-  const [votingTab, setVotingTab] = useState<'new' | 'results'>('new');
-  const [showNotesAuthors, setShowNotesAuthors] = useState(true);
-  const [showTimerNotification, setShowTimerNotification] = useState(false);
-  const [minutes, setMinutes] = useState(0);
-  const [seconds, setSeconds] = useState(34);
+  const [hours, setHours] = useState('00');
+  const [minutes, setMinutes] = useState('30');
+  const [seconds, setSeconds] = useState('00');
+  const [timeIsRunning, setTimeIsRunning] = useState(false);
   
-  const handleCollaboratorsClick = () => {
-    setShowCollaborators(!showCollaborators);
-    setShowGroups(false);
-    setShowTimer(false);
-    setShowVoting(false);
+  const toggleAuthors = () => {
+    setShowAuthors(!showAuthors);
+    toast(showAuthors ? 'Autores ocultos' : 'Autores visibles');
   };
-  
-  const handleGroupsClick = () => {
-    setShowGroups(true);
-    setShowCollaborators(false);
-  };
-  
-  const handleTimerClick = () => {
+
+  const toggleTimer = () => {
     setShowTimer(!showTimer);
-    setShowCollaborators(false);
-    setShowGroups(false);
-    setShowVoting(false);
   };
-  
-  const handleVotingClick = () => {
-    setShowVoting(!showVoting);
-    setShowCollaborators(false);
-    setShowGroups(false);
-    setShowTimer(false);
-  };
-  
-  const handleToggleAuthors = () => {
-    setShowNotesAuthors(!showNotesAuthors);
-    toast.success(`${showNotesAuthors ? 'Autores ocultados' : 'Autores mostrados'} correctamente`);
-  };
-  
+
   const handleStartTimer = () => {
+    if (hours === '00' && minutes === '00' && seconds === '00') {
+      toast.error('Debes configurar un tiempo mayor a cero');
+      return;
+    }
+    
+    setTimeIsRunning(true);
     setShowTimer(false);
-    // Here we would normally start a real timer
-    // For demo purposes, we'll just show the notification after a short delay
+    toast.success(`Temporizador iniciado: ${hours}:${minutes}:${seconds}`);
+    
+    // In a real app, we would start a countdown timer here
+    // For this demo, we'll just simulate it ending after a few seconds
     setTimeout(() => {
-      setShowTimerNotification(true);
-    }, 2000);
+      setTimeIsRunning(false);
+      toast('¡Tiempo finalizado!', {
+        duration: 5000,
+        action: {
+          label: 'Reiniciar',
+          onClick: () => handleStartTimer()
+        }
+      });
+    }, 5000);
   };
 
-  const handleShowVotingResults = () => {
-    setShowVoting(false);
-    if (onShowVotingResults) {
-      onShowVotingResults();
-    }
-  };
-
-  const handleShowAIGenerator = () => {
-    if (onShowAIGenerator) {
-      onShowAIGenerator();
-    }
-  };
-
-  const handleShowComments = () => {
-    if (onShowComments) {
-      onShowComments();
-    }
-  };
-
-  const handleShowSharing = () => {
-    if (onShowSharing) {
-      onShowSharing();
-    }
+  const handleCancelTimer = () => {
+    setTimeIsRunning(false);
+    toast('Temporizador cancelado');
   };
   
   return (
-    <TooltipProvider>
-      <div className={`fixed top-[68px] right-6 bg-white rounded-lg shadow-md p-2 z-20 ${className}`}>
-        <div className="flex flex-col space-y-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className={`rounded-md ${showCollaborators ? 'bg-gray-100' : ''}`}
-                onClick={handleCollaboratorsClick}
-              >
-                <Users className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <p>Colaboradores</p>
-            </TooltipContent>
-          </Tooltip>
+    <div className="fixed top-16 right-4 z-10">
+      <div className="flex flex-col space-y-2">
+        <div className="relative group">
+          <div className="absolute top-0 right-0 -mt-1 -mr-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+          <UserAvatar showCollaborators={true} size="lg" className="cursor-pointer" />
           
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className={`rounded-md ${showTimer ? 'bg-gray-100' : ''}`}
-                onClick={handleTimerClick}
-              >
-                <Clock className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <p>Temporizador</p>
-            </TooltipContent>
-          </Tooltip>
-          
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className={`rounded-md ${showVoting ? 'bg-gray-100' : ''}`}
-                onClick={handleVotingClick}
-              >
-                <CheckSquare className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <p>Votación</p>
-            </TooltipContent>
-          </Tooltip>
-          
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="rounded-md"
-                onClick={handleToggleAuthors}
-              >
-                <Sparkles className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <p>{showNotesAuthors ? 'Ocultar autores' : 'Mostrar autores'}</p>
-            </TooltipContent>
-          </Tooltip>
-          
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="rounded-md"
-                onClick={handleShowComments}
-              >
-                <MessageCircle className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <p>Comentarios</p>
-            </TooltipContent>
-          </Tooltip>
-          
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="default" 
-                size="icon" 
-                className="rounded-md bg-indigo-600 hover:bg-indigo-700"
-                onClick={handleShowSharing}
-              >
-                <Share2 className="h-5 w-5 text-white" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <p>Compartir</p>
-            </TooltipContent>
-          </Tooltip>
-          
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="icon" 
-                className="rounded-md"
-                onClick={() => {
-                  toast.success('Enlace copiado al portapapeles');
-                }}
-              >
-                <Link2 className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <p>Copiar enlace</p>
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="rounded-md"
-                onClick={handleShowAIGenerator}
-              >
-                <div className="text-blue-500 flex items-center justify-center">
-                  <span className="text-lg">🐼</span>
-                </div>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <p>DupreeAI</p>
-            </TooltipContent>
-          </Tooltip>
+          <div className="absolute top-0 right-12 mt-1 p-2 bg-white shadow-lg rounded-lg invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 w-max">
+            <span className="text-sm font-medium">5 usuarios conectados</span>
+          </div>
         </div>
         
-        {/* Collaborators Panel */}
-        {showCollaborators && (
-          <div className="absolute top-0 right-16 w-72 bg-white rounded-lg shadow-lg">
-            <div className="p-4 max-h-96 overflow-auto">
-              <div className="flex items-center mb-4">
-                <div className="flex items-center">
-                  <UserAvatar />
-                  <h3 className="ml-3 font-medium">GIUSEPPE PIMINCHUMO</h3>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon" className="bg-white shadow-sm">
+              <Users className="h-5 w-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel>Colaboradores</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <div className="max-h-[250px] overflow-y-auto">
+              <div className="px-2 py-1.5">
+                <div className="relative mb-2">
+                  <input 
+                    type="text" 
+                    placeholder="Buscar colaborador..."
+                    className="w-full border rounded-md px-2 py-1 text-sm"
+                  />
+                  <svg className="absolute right-2 top-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
                 </div>
-                <Button variant="ghost" size="icon" className="ml-auto" onClick={handleCollaboratorsClick}>
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-              <Separator className="my-4" />
-              <div className="relative mb-4">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
-                <Input placeholder="Buscar a alguien para seguir" className="pl-9" />
-              </div>
-              
-              <div className="space-y-3 mt-4">
-                <div className="flex items-center p-2 hover:bg-gray-100 rounded-md cursor-pointer">
-                  <UserAvatar />
-                  <span className="ml-3 font-medium">CARLOS ANTONIO LUJAN</span>
-                </div>
-                <div className="flex items-center p-2 hover:bg-gray-100 rounded-md cursor-pointer">
-                  <Avatar className="h-9 w-9">
-                    <AvatarImage src="https://i.pravatar.cc/150?img=33" alt="Jorge" />
-                    <AvatarFallback>JC</AvatarFallback>
-                  </Avatar>
-                  <span className="ml-3 font-medium">JORGE CENTURION</span>
-                </div>
-                <div className="flex items-center p-2 hover:bg-gray-100 rounded-md cursor-pointer">
-                  <Avatar className="h-9 w-9">
-                    <AvatarImage src="https://i.pravatar.cc/150?img=5" alt="Maria" />
-                    <AvatarFallback>MB</AvatarFallback>
-                  </Avatar>
-                  <span className="ml-3 font-medium">MARIA BECERRA</span>
-                </div>
-                <div className="flex items-center p-2 hover:bg-gray-100 rounded-md cursor-pointer">
-                  <UserAvatar />
-                  <span className="ml-3 font-medium">CARLOS ANTONIO LUJAN</span>
-                </div>
-              </div>
-              
-              <Button 
-                className="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white" 
-                onClick={handleGroupsClick}
-              >
-                Gestionar grupos
-              </Button>
-            </div>
-          </div>
-        )}
-        
-        {/* Groups Management */}
-        {showGroups && (
-          <div className="absolute top-0 right-16 w-80 bg-white rounded-lg shadow-lg">
-            <div className="p-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold">GRUPOS</h3>
-                <Button variant="ghost" size="icon" onClick={() => setShowGroups(false)}>
-                  <X className="h-5 w-5" />
-                </Button>
-              </div>
-              
-              <div className="space-y-4">
-                <div>
-                  <select className="w-full h-10 px-3 py-2 bg-gray-200 rounded-md">
-                    <option>G1 - Area de Desarrollo Software</option>
-                  </select>
-                  <div className="flex items-center mt-2 p-2 bg-gray-50 rounded-md">
-                    <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
-                      <UserPlus className="h-5 w-5 text-gray-600" />
+                
+                <div className="space-y-1">
+                  <DropdownMenuItem>
+                    <div className="flex items-center">
+                      <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center mr-2 text-xs font-medium text-indigo-800">
+                        GP
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-sm">Giuseppe Piminchumo</div>
+                        <div className="text-xs text-gray-500">Owner</div>
+                      </div>
+                      <button className="text-xs text-blue-500 hover:text-blue-700">
+                        Seguir
+                      </button>
                     </div>
-                    <span className="ml-3 font-medium">Agregar un miembro</span>
-                  </div>
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuItem>
+                    <div className="flex items-center">
+                      <div className="w-7 h-7 rounded-full bg-purple-100 flex items-center justify-center mr-2 text-xs font-medium text-purple-800">
+                        CL
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-sm">Carlos Lujan</div>
+                        <div className="text-xs text-gray-500">Editor</div>
+                      </div>
+                      <button className="text-xs text-blue-500 hover:text-blue-700">
+                        Seguir
+                      </button>
+                    </div>
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuItem>
+                    <div className="flex items-center">
+                      <div className="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center mr-2 text-xs font-medium text-green-800">
+                        MU
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-sm">Manuel Uriben</div>
+                        <div className="text-xs text-gray-500">Editor</div>
+                      </div>
+                      <button className="text-xs text-blue-500 hover:text-blue-700">
+                        Seguir
+                      </button>
+                    </div>
+                  </DropdownMenuItem>
                 </div>
-                
-                <select className="w-full h-10 px-3 py-2 bg-gray-200 rounded-md">
-                  <option>G2 - Area de marketing</option>
-                </select>
-                
-                <select className="w-full h-10 px-3 py-2 bg-gray-200 rounded-md">
-                  <option>G3 - Area de administracion</option>
-                </select>
-                
-                <select className="w-full h-10 px-3 py-2 bg-gray-200 rounded-md">
-                  <option>G4 - Area de Diseño Software</option>
-                </select>
-                
-                <div className="flex items-center justify-between">
-                  <span>Carlos Lujan</span>
-                  <span className="text-gray-500">Mover</span>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <span>Manuel Uriben</span>
-                  <span className="text-gray-500">Mover</span>
-                </div>
-                
-                <Separator />
-                
-                <h3 className="font-bold">Participantes</h3>
-                
-                <div className="relative">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
-                  <Input placeholder="Buscar..." className="pl-9" />
-                </div>
-                
-                <div className="max-h-40 overflow-y-auto space-y-2">
-                  <div>Jorge Centurion</div>
-                  <div>Julio Gutierrez</div>
-                  <div>Carlos Antonio</div>
-                  <div>Giuseppe Piminchumo</div>
-                </div>
-                
-                <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
-                  Guardar grupos
-                </Button>
               </div>
             </div>
-          </div>
-        )}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => toast('Función no implementada')}>
+              <UserPlus className="h-4 w-4 mr-2" />
+              <span>Administrar Grupos</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         
-        {/* Timer Panel */}
-        {showTimer && (
-          <div className="absolute top-0 right-16 w-64 bg-white rounded-lg shadow-lg">
-            <div className="p-4">
-              <div className="text-center">
-                <div className="flex items-center justify-center mb-4">
-                  <Clock className="h-8 w-8 text-indigo-600" />
-                  <span className="text-2xl font-bold ml-2">{String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}</span>
+        <Button 
+          variant="outline" 
+          size="icon" 
+          className="bg-white shadow-sm"
+          onClick={onShowComments}
+        >
+          <MessageSquare className="h-5 w-5" />
+        </Button>
+        
+        {!timeIsRunning ? (
+          <div className="relative">
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="bg-white shadow-sm"
+              onClick={toggleTimer}
+            >
+              <TimerReset className="h-5 w-5" />
+            </Button>
+            
+            {showTimer && (
+              <div className="absolute right-12 top-0 bg-white rounded-lg shadow-lg p-3 w-64">
+                <h3 className="text-sm font-medium mb-2">Configurar temporizador</h3>
+                <div className="flex space-x-2 mb-3">
+                  <div className="flex-1">
+                    <label className="text-xs text-gray-500 mb-1 block">Horas</label>
+                    <select 
+                      className="w-full border rounded-md p-1 text-sm"
+                      value={hours}
+                      onChange={(e) => setHours(e.target.value)}
+                    >
+                      {[...Array(24)].map((_, i) => (
+                        <option key={i} value={i.toString().padStart(2, '0')}>
+                          {i.toString().padStart(2, '0')}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex-1">
+                    <label className="text-xs text-gray-500 mb-1 block">Minutos</label>
+                    <select 
+                      className="w-full border rounded-md p-1 text-sm"
+                      value={minutes}
+                      onChange={(e) => setMinutes(e.target.value)}
+                    >
+                      {[...Array(60)].map((_, i) => (
+                        <option key={i} value={i.toString().padStart(2, '0')}>
+                          {i.toString().padStart(2, '0')}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex-1">
+                    <label className="text-xs text-gray-500 mb-1 block">Segundos</label>
+                    <select 
+                      className="w-full border rounded-md p-1 text-sm"
+                      value={seconds}
+                      onChange={(e) => setSeconds(e.target.value)}
+                    >
+                      {[...Array(60)].map((_, i) => (
+                        <option key={i} value={i.toString().padStart(2, '0')}>
+                          {i.toString().padStart(2, '0')}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-                <Button 
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white" 
-                  onClick={handleStartTimer}
-                >
-                  Iniciar tiempo
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {/* Timer Notification */}
-        {showTimerNotification && (
-          <Dialog open={showTimerNotification} onOpenChange={setShowTimerNotification}>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle className="text-center text-lg font-bold">AVISO DE TIMER</DialogTitle>
-              </DialogHeader>
-              <Separator />
-              <div className="flex flex-col items-center p-4">
-                <p className="text-center mb-4">
-                  El tiempo ha finalizado. te lo notificamos para que continúes con tus actividades
-                </p>
-                <img 
-                  src="/lovable-uploads/ed7975e1-d87a-43ee-bbf5-560a68e7f93c.png" 
-                  alt="Timer" 
-                  className="h-20 w-20 mb-4" 
-                />
-                <Button 
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white" 
-                  onClick={() => setShowTimerNotification(false)}
-                >
-                  Cerrar Notificacion
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        )}
-        
-        {/* Voting Panel */}
-        {showVoting && (
-          <div className="absolute top-0 right-16 w-80 bg-white rounded-lg shadow-lg overflow-hidden">
-            <div className="p-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium">Votación</h3>
-                <Button variant="ghost" size="icon" onClick={() => setShowVoting(false)}>
-                  <X className="h-5 w-5" />
-                </Button>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-0.5 bg-gray-200 rounded-md mb-4">
-                <Button 
-                  variant={votingTab === 'new' ? 'default' : 'ghost'} 
-                  className={`rounded-none ${votingTab === 'new' ? 'bg-white hover:bg-white text-black' : 'bg-gray-100'}`}
-                  onClick={() => setVotingTab('new')}
-                >
-                  Nueva Sesión
-                </Button>
-                <Button 
-                  variant={votingTab === 'results' ? 'default' : 'ghost'} 
-                  className={`rounded-none ${votingTab === 'results' ? 'bg-white hover:bg-white text-black' : 'bg-gray-100'}`}
-                  onClick={() => setVotingTab('results')}
-                >
-                  Resultados
-                </Button>
-              </div>
-              
-              {votingTab === 'new' ? (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block mb-2">Nombre de Sesión</label>
-                    <Input placeholder="Escribir nombre de votación" />
-                  </div>
-                  
-                  <div className="flex gap-4">
-                    <div className="w-1/2">
-                      <label className="block mb-2">Votos</label>
-                      <div className="flex items-center">
-                        <Button variant="outline" size="icon" className="h-8 w-8 rounded-full">-</Button>
-                        <span className="mx-3 font-bold">1</span>
-                        <Button variant="outline" size="icon" className="h-8 w-8 rounded-full">+</Button>
-                      </div>
-                    </div>
-                    
-                    <div className="w-1/2">
-                      <label className="block mb-2">Segundos</label>
-                      <div className="flex items-center">
-                        <Button variant="outline" size="icon" className="h-8 w-8 rounded-full">-</Button>
-                        <span className="mx-3 font-bold">1</span>
-                        <Button variant="outline" size="icon" className="h-8 w-8 rounded-full">+</Button>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <label>Múltiples votos por objeto</label>
-                    <Switch />
-                  </div>
-                  
-                  <div>
-                    <label className="block mb-2">Seleccionar área de votación</label>
-                    <Button variant="outline" className="w-full bg-gray-100">Seleccionar</Button>
-                  </div>
-                  
-                  <div className="bg-gray-100 p-3 rounded-md">
-                    <h4 className="font-bold mb-2">Filtros</h4>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <label className="flex items-center">
-                          <input type="checkbox" className="mr-2" />
-                          Sticky Notes
-                        </label>
-                        <span>32</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <label className="flex items-center">
-                          <input type="checkbox" className="mr-2" />
-                          Formas
-                        </label>
-                        <span>12</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <label className="flex items-center">
-                          <input type="checkbox" className="mr-2" />
-                          Imágenes
-                        </label>
-                        <span>0</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <label className="flex items-center">
-                          <input type="checkbox" className="mr-2" />
-                          Textos
-                        </label>
-                        <span>0</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <label className="flex items-center">
-                          <input type="checkbox" className="mr-2" />
-                          Sections
-                        </label>
-                        <span>4</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
-                    Iniciar para todos
+                <div className="flex justify-end space-x-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={toggleTimer}
+                    className="text-xs h-8"
+                  >
+                    Cancelar
+                  </Button>
+                  <Button 
+                    onClick={handleStartTimer}
+                    size="sm"
+                    className="text-xs h-8 bg-indigo-600 hover:bg-indigo-700 text-white"
+                  >
+                    Iniciar
                   </Button>
                 </div>
-              ) : (
-                <div className="space-y-2 max-h-96 overflow-y-auto">
-                  {[
-                    { name: 'Voten por las mejores opciones del FODA realizado', date: '15 Feb' },
-                    { name: 'Qué fortalezas y debilidades son más importantes en la empresa', date: '08 Feb' },
-                    { name: 'Votación 3', date: '01 Feb' },
-                    { name: 'Votación 2', date: '14 Ene' },
-                    { name: 'Cuales son las más importantes opciones de todos los FODAs', date: '03 Ene' }
-                  ].map((vote, index) => (
-                    <div 
-                      key={index} 
-                      className="p-3 border-l-4 border-indigo-600 bg-white hover:bg-gray-50 cursor-pointer flex justify-between items-center"
-                      onClick={handleShowVotingResults}
-                    >
-                      <div className="text-sm">{vote.name}</div>
-                      <div className="text-xs text-gray-500">{vote.date}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
+        ) : (
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="bg-red-50 border-red-300 text-red-600 shadow-sm relative animate-pulse"
+            onClick={handleCancelTimer}
+          >
+            <CalendarClock className="h-5 w-5" />
+            <span className="sr-only">Cancelar temporizador</span>
+          </Button>
         )}
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon" className="bg-white shadow-sm">
+              <Vote className="h-5 w-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel>Votación</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => toast('Función no implementada')}>
+              <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              <span>Crear nueva votación</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={onShowVotingResults}>
+              <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <span>Ver resultados</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        
+        <Button 
+          variant="outline" 
+          size="icon" 
+          className="bg-white shadow-sm"
+          onClick={toggleAuthors}
+        >
+          <EyeOff className="h-5 w-5" />
+        </Button>
+        
+        <Button 
+          variant="outline" 
+          size="icon" 
+          className="bg-white shadow-sm"
+          onClick={onShowAIGenerator}
+        >
+          <Sparkles className="h-5 w-5" />
+        </Button>
+        
+        <Button 
+          variant="outline" 
+          size="icon" 
+          className="bg-white shadow-sm"
+          onClick={onShowEficientisIntegration}
+        >
+          <Inbox className="h-5 w-5" />
+        </Button>
+        
+        <Button 
+          variant="outline" 
+          size="icon" 
+          className="bg-white shadow-sm"
+          onClick={onShowTemplates}
+        >
+          <LayoutTemplate className="h-5 w-5" />
+        </Button>
+        
+        <Button 
+          variant="default" 
+          className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm gap-1"
+          onClick={onShowSharing}
+        >
+          <Share2 className="h-4 w-4" />
+          <span>Compartir</span>
+        </Button>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon" className="bg-white shadow-sm">
+              <Settings className="h-5 w-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Opciones del tablero</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => toast('Función no implementada')}>
+              Ver detalles
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => toast('Función no implementada')}>
+              Historial de cambios
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => toast('Función no implementada')}>
+              Exportar tablero
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => toast('Función no implementada')}>
+              Configuración
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
-    </TooltipProvider>
+    </div>
   );
 };
 

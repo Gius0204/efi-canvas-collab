@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import CanvasHeader from '@/components/canvas/CanvasHeader';
@@ -11,7 +10,10 @@ import StatisticsPanel from '@/components/canvas/StatisticsPanel';
 import AIGeneratorPanel from '@/components/canvas/AIGeneratorPanel';
 import CommentsPanel from '@/components/canvas/CommentsPanel';
 import SharePanel from '@/components/canvas/SharePanel';
+import EficientisIntegrationPanel from '@/components/canvas/EficientisIntegrationPanel';
+import TemplatePanel from '@/components/canvas/TemplatePanel';
 import { toast } from 'sonner';
+import { StatisticItem } from '@/components/canvas/StatisticsPanel';
 
 const CanvasPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -24,6 +26,8 @@ const CanvasPage = () => {
   const [showAIGenerator, setShowAIGenerator] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [showSharing, setShowSharing] = useState(false);
+  const [showEficientisIntegration, setShowEficientisIntegration] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
   const [isVotingOwner, setIsVotingOwner] = useState(false);
   
   // Mock data for voting progress
@@ -34,13 +38,6 @@ const CanvasPage = () => {
     { id: '4', name: 'Dante Aguilar', avatar: '', hasVoted: true, votesUsed: 5, totalVotes: 5 },
   ];
   
-  const mockVoteItems = [
-    { id: '1', content: 'Alta diversificación de líneas de productos.', color: 'bg-yellow-200', votes: 5 },
-    { id: '2', content: 'Expansión a mercado internacional.', color: 'bg-blue-200', votes: 3 },
-    { id: '3', content: 'Eficiencia en la gestión de costos operativos.', color: 'bg-green-200', votes: 2 },
-    { id: '4', content: 'Incremento en costos de materias primas.', color: 'bg-red-200', votes: 2 },
-  ];
-
   // Mock data for voting results with avatars
   const mockVoteItemsWithVoters = [
     { 
@@ -97,17 +94,17 @@ const CanvasPage = () => {
   ];
 
   // Mock data for statistics
-  const mockStatisticsItems = [
-    { id: '1', content: 'Competencia con precios más bajos.', percentage: 67, category: 'amenazas', color: 'bg-red-500' },
-    { id: '2', content: 'Expansión a nuevos mercados internacionales.', percentage: 60, category: 'oportunidades', color: 'bg-blue-500' },
-    { id: '3', content: 'Acceso a financiamiento con tasas competitivas.', percentage: 49, category: 'fortalezas', color: 'bg-green-500' },
-    { id: '4', content: 'Falta de diversificación en líneas de productos.', percentage: 37, category: 'debilidades', color: 'bg-orange-400' },
-    { id: '5', content: 'Diversificación de fuentes de ingresos.', percentage: 31, category: 'fortalezas', color: 'bg-green-500' },
-    { id: '6', content: 'Cambios en las preferencias del consumidor.', percentage: 27, category: 'amenazas', color: 'bg-red-500' },
-    { id: '7', content: 'Tendencias hacia la digitalización que reducen costos.', percentage: 20, category: 'oportunidades', color: 'bg-blue-500' },
-    { id: '8', content: 'Falta de segmentación en campañas publicitarias.', percentage: 17, category: 'debilidades', color: 'bg-orange-400' },
-    { id: '9', content: 'Crecimiento del segmento de mercado juvenil.', percentage: 8, category: 'oportunidades', color: 'bg-blue-500' },
-    { id: '10', content: 'Riesgo de fluctuación en el tipo de cambio.', percentage: 4, category: 'amenazas', color: 'bg-red-500' },
+  const mockStatisticsItems: StatisticItem[] = [
+    { id: '1', content: 'Competencia con precios más bajos.', percentage: 67, category: "amenazas", color: 'bg-red-500' },
+    { id: '2', content: 'Expansión a nuevos mercados internacionales.', percentage: 60, category: "oportunidades", color: 'bg-blue-500' },
+    { id: '3', content: 'Acceso a financiamiento con tasas competitivas.', percentage: 49, category: "fortalezas", color: 'bg-green-500' },
+    { id: '4', content: 'Falta de diversificación en líneas de productos.', percentage: 37, category: "debilidades", color: 'bg-orange-400' },
+    { id: '5', content: 'Diversificación de fuentes de ingresos.', percentage: 31, category: "fortalezas", color: 'bg-green-500' },
+    { id: '6', content: 'Cambios en las preferencias del consumidor.', percentage: 27, category: "amenazas", color: 'bg-red-500' },
+    { id: '7', content: 'Tendencias hacia la digitalización que reducen costos.', percentage: 20, category: "oportunidades", color: 'bg-blue-500' },
+    { id: '8', content: 'Falta de segmentación en campañas publicitarias.', percentage: 17, category: "debilidades", color: 'bg-orange-400' },
+    { id: '9', content: 'Crecimiento del segmento de mercado juvenil.', percentage: 8, category: "oportunidades", color: 'bg-blue-500' },
+    { id: '10', content: 'Riesgo de fluctuación en el tipo de cambio.', percentage: 4, category: "amenazas", color: 'bg-red-500' },
   ];
 
   // Mock comments data
@@ -149,33 +146,28 @@ const CanvasPage = () => {
 
   // Mock collaborators data
   const mockCollaborators = [
-    { id: '1', name: 'GIUSEPPE PIMINCHUMO LEYVA', avatar: '/lovable-uploads/cd62cb53-a08a-4049-b537-c910fa5ed4ca.png', permission: 'owner' },
-    { id: '2', name: 'CARLOS ANTONIO LUJAN', avatar: '/lovable-uploads/cd62cb53-a08a-4049-b537-c910fa5ed4ca.png', permission: 'edit' },
-    { id: '3', name: 'MANUEL URIBEN', avatar: '/lovable-uploads/cd62cb53-a08a-4049-b537-c910fa5ed4ca.png', permission: 'edit' },
-    { id: '4', name: 'JORGE CENTURION', avatar: 'https://i.pravatar.cc/150?img=33', permission: 'view' },
-    { id: '5', name: 'MARIA BECERRA', avatar: 'https://i.pravatar.cc/150?img=5', permission: 'view' }
+    { id: '1', name: 'GIUSEPPE PIMINCHUMO LEYVA', avatar: '/lovable-uploads/cd62cb53-a08a-4049-b537-c910fa5ed4ca.png', permission: 'owner' as const },
+    { id: '2', name: 'CARLOS ANTONIO LUJAN', avatar: '/lovable-uploads/cd62cb53-a08a-4049-b537-c910fa5ed4ca.png', permission: 'edit' as const },
+    { id: '3', name: 'MANUEL URIBEN', avatar: '/lovable-uploads/cd62cb53-a08a-4049-b537-c910fa5ed4ca.png', permission: 'edit' as const },
+    { id: '4', name: 'JORGE CENTURION', avatar: 'https://i.pravatar.cc/150?img=33', permission: 'view' as const },
+    { id: '5', name: 'MARIA BECERRA', avatar: 'https://i.pravatar.cc/150?img=5', permission: 'view' as const }
   ];
   
   useEffect(() => {
-    // Simulate loading the canvas data
     const loadCanvas = async () => {
       setIsLoading(true);
       
       try {
-        // Simulate API call to get canvas data
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // If it's a new canvas
         if (id === 'new') {
           setTitle('Lienzo sin título');
           toast.success('Nuevo lienzo creado correctamente');
         } 
-        // If it's a template
         else if (id?.startsWith('template/')) {
           const templateId = id.split('/')[1];
           let templateName = 'Plantilla';
           
-          // Map template IDs to names
           switch (templateId) {
             case 'foda':
               templateName = 'FODA';
@@ -194,14 +186,11 @@ const CanvasPage = () => {
           setTitle(`${templateName} sin título`);
           toast.success(`Lienzo de ${templateName} creado correctamente`);
         }
-        // For AI created canvas
         else if (id === 'ai-new') {
           setTitle('Lienzo IA sin título');
           toast.success('Lienzo creado con IA correctamente');
         }
-        // For existing canvas
         else {
-          // This would be replaced with actual data from API
           setTitle('Proyecto cargado');
           toast.success('Lienzo cargado correctamente');
         }
@@ -215,7 +204,6 @@ const CanvasPage = () => {
     
     loadCanvas();
     
-    // Simulate a voting notification after 5 seconds for demo purposes
     const votingNotificationTimer = setTimeout(() => {
       setShowVotingNotification(true);
     }, 5000);
@@ -316,7 +304,33 @@ const CanvasPage = () => {
   const handleRemoveCollaborator = (id: string) => {
     toast.success(`Colaborador #${id} eliminado correctamente`);
   };
-  
+
+  const handleShowEficientisIntegration = () => {
+    setShowEficientisIntegration(true);
+  };
+
+  const handleCloseEficientisIntegration = () => {
+    setShowEficientisIntegration(false);
+  };
+
+  const handleShowTemplates = () => {
+    setShowTemplates(true);
+  };
+
+  const handleCloseTemplates = () => {
+    setShowTemplates(false);
+  };
+
+  const handleImportFromEficientis = () => {
+    toast.success('Buscando e importando datos de Eficientis...');
+    handleCloseEficientisIntegration();
+  };
+
+  const handleCreateBoardForEficientis = () => {
+    toast.success('Creando nuevo board para Eficientis...');
+    handleCloseEficientisIntegration();
+  };
+
   if (isLoading) {
     return (
       <div className="flex flex-col h-screen">
@@ -338,6 +352,8 @@ const CanvasPage = () => {
           onShowAIGenerator={handleShowAIGenerator}
           onShowComments={handleShowComments}
           onShowSharing={handleShowSharing}
+          onShowEficientisIntegration={handleShowEficientisIntegration}
+          onShowTemplates={handleShowTemplates}
         />
         
         {showVotingNotification && (
@@ -404,6 +420,20 @@ const CanvasPage = () => {
             onInvite={handleInvite}
             onUpdateCollaborator={handleUpdateCollaborator}
             onRemoveCollaborator={handleRemoveCollaborator}
+          />
+        )}
+
+        {showEficientisIntegration && (
+          <EficientisIntegrationPanel
+            onClose={handleCloseEficientisIntegration}
+            onImport={handleImportFromEficientis}
+            onCreateBoard={handleCreateBoardForEficientis}
+          />
+        )}
+
+        {showTemplates && (
+          <TemplatePanel
+            onClose={handleCloseTemplates}
           />
         )}
       </div>

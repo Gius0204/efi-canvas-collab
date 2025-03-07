@@ -1,20 +1,28 @@
 
 import React, { useState } from 'react';
-import { X, Copy, ChevronDown, Users, UserPlus } from 'lucide-react';
+import { X, Copy, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import UserAvatar from '@/components/UserAvatar';
 import { toast } from 'sonner';
+
+type Permission = "view" | "edit" | "owner";
 
 interface Collaborator {
   id: string;
   name: string;
-  avatar?: string;
-  permission: 'owner' | 'edit' | 'view';
+  avatar: string;
+  permission: Permission;
 }
 
 interface SharePanelProps {
@@ -26,264 +34,224 @@ interface SharePanelProps {
   onRemoveCollaborator: (id: string) => void;
 }
 
-const SharePanel: React.FC<SharePanelProps> = ({
-  title,
-  collaborators,
-  onClose,
+const SharePanel: React.FC<SharePanelProps> = ({ 
+  title, 
+  collaborators, 
+  onClose, 
   onInvite,
   onUpdateCollaborator,
   onRemoveCollaborator
 }) => {
-  const [activeTab, setActiveTab] = useState<string>('email');
   const [email, setEmail] = useState('');
-  const [permission, setPermission] = useState('edit');
-  const [notifyCollaborators, setNotifyCollaborators] = useState(false);
-  const [linkPermission, setLinkPermission] = useState('edit');
-  const [showManageAccess, setShowManageAccess] = useState(false);
+  const [permission, setPermission] = useState<Permission>('edit');
+  const [notifyCollaborators, setNotifyCollaborators] = useState(true);
+  const [publicLinkEnabled, setPublicLinkEnabled] = useState(false);
+  const [publicPermission, setPublicPermission] = useState<Permission>('view');
+  const [manageMode, setManageMode] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+  
+  const publicLink = `https://eficiente.io/board/${Math.random().toString(36).substring(2, 15)}`;
   
   const handleInvite = () => {
-    if (!email.trim()) return;
+    if (!email.trim()) {
+      toast.error('Por favor ingresa un correo electrónico');
+      return;
+    }
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error('Por favor ingresa un correo electrónico válido');
+      return;
+    }
+    
     onInvite(email, permission);
     setEmail('');
-    toast.success('Invitación enviada correctamente');
   };
   
   const handleCopyLink = () => {
-    navigator.clipboard.writeText('https://enlace.para.compartir/lienzo-' + Date.now());
+    navigator.clipboard.writeText(publicLink);
+    setLinkCopied(true);
     toast.success('Enlace copiado al portapapeles');
+    
+    setTimeout(() => {
+      setLinkCopied(false);
+    }, 2000);
   };
   
-  const handleSaveAccess = () => {
-    setShowManageAccess(false);
-    toast.success('Permisos de acceso actualizados correctamente');
+  const handlePermissionChange = (id: string, newPermission: Permission) => {
+    onUpdateCollaborator(id, newPermission);
+  };
+  
+  const handleRemoveCollaborator = (id: string) => {
+    onRemoveCollaborator(id);
   };
   
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-md">
-        {!showManageAccess ? (
-          <div className="p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-medium">COMPARTIR Lienzo {title}</h2>
-              <Button variant="ghost" size="icon" onClick={onClose}>
-                <X className="h-5 w-5" />
+      <div className="w-full max-w-lg bg-white rounded-lg shadow-lg">
+        <div className="p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Compartir {title}</h2>
+            <Button variant="ghost" size="icon" onClick={onClose}>
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
+          
+          <div className="mb-6">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Añadir personas por correo"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1"
+              />
+              <Select value={permission} onValueChange={(value) => setPermission(value as Permission)}>
+                <SelectTrigger className="w-28">
+                  <SelectValue placeholder="Permisos" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="edit">Editar</SelectItem>
+                  <SelectItem value="view">Ver</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button 
+                variant="default" 
+                className="whitespace-nowrap bg-indigo-600 hover:bg-indigo-700"
+                onClick={handleInvite}
+              >
+                Invitar
               </Button>
             </div>
             
-            <Tabs defaultValue="email" onValueChange={setActiveTab}>
-              <TabsList className="grid grid-cols-2 mb-4">
-                <TabsTrigger value="email" className="data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-indigo-600 rounded-none py-2 text-sm">
-                  Invitar por correo electrónico
-                </TabsTrigger>
-                <TabsTrigger value="link" className="data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-indigo-600 rounded-none py-2 text-sm">
-                  Enlace para compartir
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="email" className="mt-0">
-                <div className="space-y-4">
-                  <div className="grid grid-cols-3 gap-2">
-                    <div className="col-span-2">
-                      <Input 
-                        placeholder="Invitar por correo electrónico" 
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                    </div>
-                    <div className="col-span-1 flex items-center">
-                      <Select value={permission} onValueChange={setPermission}>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Editar" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="edit">Editar</SelectItem>
-                          <SelectItem value="view">Ver</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                    onClick={handleInvite}
-                    disabled={!email.trim()}
-                  >
-                    Invitar
-                  </Button>
-                  
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="notify" 
-                      checked={notifyCollaborators}
-                      onCheckedChange={(checked) => setNotifyCollaborators(checked as boolean)}
-                    />
-                    <label htmlFor="notify" className="text-sm">
-                      Notificar a los colaboradores
-                    </label>
-                  </div>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="link" className="mt-0">
-                <div className="space-y-4">
-                  <div className="border rounded-md p-3">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center space-x-2">
-                        <div className="p-1 bg-gray-100 rounded-full">
-                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                        </div>
-                        <span>Cualquier persona con el enlace (Público)</span>
-                      </div>
-                      <ChevronDown className="h-4 w-4 opacity-50" />
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-3 gap-2">
-                    <div className="col-span-2">
-                      <Input 
-                        value="https://enlace.para.compartir/..." 
-                        readOnly
-                        className="bg-gray-50"
-                      />
-                    </div>
-                    <div className="col-span-1">
-                      <Select value={permission} onValueChange={setPermission}>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Editar" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="edit">Editar</SelectItem>
-                          <SelectItem value="view">Ver</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                    onClick={handleCopyLink}
-                  >
-                    Copiar
-                  </Button>
-                </div>
-              </TabsContent>
-            </Tabs>
-            
-            <Separator className="my-4" />
-            
-            <div className="space-y-3">
-              <p className="font-medium">Colaboradores</p>
-              
-              <div className="flex items-center">
-                <div className="flex -space-x-2">
-                  {collaborators.slice(0, 4).map((collab) => (
-                    <Avatar key={collab.id} className="h-8 w-8 border-2 border-white">
-                      {collab.avatar ? (
-                        <AvatarImage src={collab.avatar} alt={collab.name} />
-                      ) : (
-                        <AvatarFallback>{collab.name.charAt(0)}</AvatarFallback>
-                      )}
-                    </Avatar>
-                  ))}
-                  {collaborators.length > 4 && (
-                    <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-sm border-2 border-white">
-                      +{collaborators.length - 4}
-                    </div>
-                  )}
-                </div>
-                
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="ml-4 text-blue-600"
-                  onClick={() => setShowManageAccess(true)}
-                >
-                  <Users className="h-4 w-4 mr-1" />
-                  Gestionar el acceso
-                </Button>
-              </div>
+            <div className="flex items-center gap-2 mt-2">
+              <Checkbox 
+                id="notify-collaborators" 
+                checked={notifyCollaborators}
+                onCheckedChange={() => setNotifyCollaborators(!notifyCollaborators)}
+              />
+              <label htmlFor="notify-collaborators" className="text-sm text-gray-600">
+                Notificar a los colaboradores
+              </label>
             </div>
           </div>
-        ) : (
-          <div className="p-4">
-            <div className="flex items-center mb-6">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="mr-2"
-                onClick={() => setShowManageAccess(false)}
-              >
-                <ChevronDown className="h-4 w-4 -rotate-90" />
-              </Button>
-              <h2 className="text-lg font-bold">GESTIONAR COLABORADORES</h2>
+          
+          <div className="mb-6">
+            <h3 className="font-medium mb-2">Enlace público</h3>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center flex-1">
+                <Switch 
+                  checked={publicLinkEnabled}
+                  onCheckedChange={setPublicLinkEnabled}
+                  id="public-link"
+                />
+                <label htmlFor="public-link" className="ml-2 text-sm">
+                  {publicLinkEnabled ? 'Enlace activado' : 'Enlace desactivado'}
+                </label>
+              </div>
+              
+              {publicLinkEnabled && (
+                <Select 
+                  value={publicPermission} 
+                  onValueChange={(value) => setPublicPermission(value as Permission)}
+                  disabled={!publicLinkEnabled}
+                >
+                  <SelectTrigger className="w-28">
+                    <SelectValue placeholder="Permisos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="edit">Editar</SelectItem>
+                    <SelectItem value="view">Ver</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
             </div>
             
-            <Separator className="mb-4" />
+            {publicLinkEnabled && (
+              <div className="flex items-center gap-2">
+                <Input 
+                  value={publicLink}
+                  readOnly
+                  className="flex-1 bg-gray-50"
+                />
+                <Button 
+                  variant="outline" 
+                  size="icon"
+                  onClick={handleCopyLink}
+                  className={linkCopied ? "bg-green-50 text-green-600" : ""}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </div>
+          
+          <Separator className="my-4" />
+          
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-medium">Colaboradores ({collaborators.length})</h3>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setManageMode(!manageMode)}
+              >
+                {manageMode ? 'Guardar cambios' : 'Administrar acceso'}
+              </Button>
+            </div>
             
-            <div className="space-y-4 max-h-[400px] overflow-y-auto">
-              {collaborators.map((collab) => (
-                <div key={collab.id} className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Avatar className="h-10 w-10 mr-3">
-                      {collab.avatar ? (
-                        <AvatarImage src={collab.avatar} alt={collab.name} />
-                      ) : (
-                        <AvatarFallback>{collab.name.charAt(0)}</AvatarFallback>
+            <div className="space-y-2">
+              {collaborators.map((collaborator) => (
+                <div key={collaborator.id} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                  <div className="flex items-center gap-2">
+                    <UserAvatar size="sm" className={collaborator.permission === "owner" ? "ring-2 ring-indigo-500" : ""} />
+                    <div>
+                      <div className="font-medium text-sm">{collaborator.name}</div>
+                      {collaborator.permission === "owner" && (
+                        <div className="text-xs text-gray-500">Propietario</div>
                       )}
-                    </Avatar>
-                    <span className="font-medium">{collab.name}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center">
-                    {collab.permission === 'owner' ? (
-                      <span className="text-gray-500">Propietario</span>
-                    ) : (
-                      <>
+                  
+                  {manageMode ? (
+                    <div className="flex items-center gap-2">
+                      {collaborator.permission !== "owner" && (
                         <Select 
-                          value={collab.permission} 
-                          onValueChange={(value) => onUpdateCollaborator(collab.id, value)}
-                          disabled={collab.permission === 'owner'}
+                          value={collaborator.permission} 
+                          onValueChange={(value) => handlePermissionChange(collaborator.id, value as Permission)}
                         >
-                          <SelectTrigger className="w-20 h-8">
-                            <SelectValue placeholder="Editar" />
+                          <SelectTrigger className="w-24 h-8 text-xs">
+                            <SelectValue placeholder="Permisos" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="edit">Editar</SelectItem>
                             <SelectItem value="view">Ver</SelectItem>
                           </SelectContent>
                         </Select>
-                        
-                        {collab.permission !== 'owner' && (
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="ml-2 text-red-500 h-7 w-7"
-                            onClick={() => onRemoveCollaborator(collab.id)}
-                          >
-                            <div className="h-6 w-6 rounded-full bg-red-100 flex items-center justify-center">
-                              <X className="h-3 w-3" />
-                            </div>
-                          </Button>
-                        )}
-                      </>
-                    )}
-                  </div>
+                      )}
+                      
+                      {collaborator.permission !== "owner" && (
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
+                          onClick={() => handleRemoveCollaborator(collaborator.id)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-sm text-gray-500">
+                      {collaborator.permission === "owner" ? "Propietario" : 
+                       collaborator.permission === "edit" ? "Puede editar" : "Puede ver"}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
-            
-            <Separator className="my-4" />
-            
-            <Button 
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
-              onClick={handleSaveAccess}
-            >
-              Guardar
-            </Button>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
