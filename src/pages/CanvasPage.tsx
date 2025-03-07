@@ -3,12 +3,33 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import CanvasHeader from '@/components/canvas/CanvasHeader';
 import Canvas from '@/components/canvas/Canvas';
+import CollaborationToolbar from '@/components/canvas/CollaborationToolbar';
+import VotingNotification from '@/components/canvas/VotingNotification';
+import VotingProgressPanel from '@/components/canvas/VotingProgressPanel';
 import { toast } from 'sonner';
 
 const CanvasPage = () => {
   const { id } = useParams<{ id: string }>();
   const [title, setTitle] = useState("TÍTULO DEL PROYECTO");
   const [isLoading, setIsLoading] = useState(true);
+  const [showVotingNotification, setShowVotingNotification] = useState(false);
+  const [showVotingProgress, setShowVotingProgress] = useState(false);
+  const [isVotingOwner, setIsVotingOwner] = useState(false);
+  
+  // Mock data for voting progress
+  const mockVoters = [
+    { id: '1', name: 'Julio Maisini', avatar: '', hasVoted: true, votesUsed: 5, totalVotes: 5 },
+    { id: '2', name: 'Morti Cesar', avatar: '', hasVoted: false, votesUsed: 3, totalVotes: 5 },
+    { id: '3', name: 'Manuel Jim.', avatar: '', hasVoted: true, votesUsed: 5, totalVotes: 5 },
+    { id: '4', name: 'Dante Aguilar', avatar: '', hasVoted: true, votesUsed: 5, totalVotes: 5 },
+  ];
+  
+  const mockVoteItems = [
+    { id: '1', content: 'Alta diversificación de líneas de productos.', color: 'bg-yellow-200', votes: 5 },
+    { id: '2', content: 'Expansión a mercado internacional.', color: 'bg-blue-200', votes: 3 },
+    { id: '3', content: 'Eficiencia en la gestión de costos operativos.', color: 'bg-green-200', votes: 2 },
+    { id: '4', content: 'Incremento en costos de materias primas.', color: 'bg-red-200', votes: 2 },
+  ];
   
   useEffect(() => {
     // Simulate loading the canvas data
@@ -68,7 +89,41 @@ const CanvasPage = () => {
     };
     
     loadCanvas();
+    
+    // Simulate a voting notification after 5 seconds for demo purposes
+    const votingNotificationTimer = setTimeout(() => {
+      setShowVotingNotification(true);
+    }, 5000);
+    
+    return () => {
+      clearTimeout(votingNotificationTimer);
+    };
   }, [id]);
+  
+  const handleJoinVoting = () => {
+    setShowVotingNotification(false);
+    setShowVotingProgress(true);
+    toast.success('Te has unido a la sesión de votación');
+  };
+  
+  const handleDismissVoting = () => {
+    setShowVotingNotification(false);
+    toast('Has decidido no participar en esta votación');
+  };
+  
+  const handleFinishVoting = () => {
+    toast.success('Has finalizado tu votación');
+    setShowVotingProgress(false);
+  };
+  
+  const handleFinishForAll = () => {
+    toast.success('La sesión de votación ha finalizado para todos');
+    setShowVotingProgress(false);
+  };
+  
+  const handleAddTime = () => {
+    toast('Se ha añadido 1 minuto más a la votación');
+  };
   
   if (isLoading) {
     return (
@@ -84,8 +139,30 @@ const CanvasPage = () => {
   return (
     <div className="flex flex-col h-screen">
       <CanvasHeader title={title} />
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden relative">
         <Canvas />
+        <CollaborationToolbar />
+        
+        {showVotingNotification && (
+          <VotingNotification 
+            onJoin={handleJoinVoting}
+            onDismiss={handleDismissVoting}
+            initiator="Líder Grupo 2"
+            description="Voten por las mejores opciones del FODA realizado..."
+          />
+        )}
+        
+        {showVotingProgress && (
+          <VotingProgressPanel 
+            isOwner={isVotingOwner}
+            voters={mockVoters}
+            voteItems={mockVoteItems}
+            timeRemaining="00:34"
+            onFinish={handleFinishVoting}
+            onFinishForAll={handleFinishForAll}
+            onAddTime={handleAddTime}
+          />
+        )}
       </div>
     </div>
   );
