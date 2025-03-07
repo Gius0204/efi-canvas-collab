@@ -156,7 +156,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({ className }
           
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="primary" size="icon" className="rounded-md bg-indigo-600 hover:bg-indigo-700">
+              <Button variant="default" size="icon" className="rounded-md bg-indigo-600 hover:bg-indigo-700">
                 <Share2 className="h-5 w-5 text-white" />
               </Button>
             </TooltipTrigger>
