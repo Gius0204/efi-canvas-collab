@@ -20,12 +20,23 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import UserAvatar from '@/components/UserAvatar';
+import { toast } from 'sonner';
 
 interface CollaborationToolbarProps {
   className?: string;
+  onShowVotingResults?: () => void;
+  onShowAIGenerator?: () => void;
+  onShowComments?: () => void;
+  onShowSharing?: () => void;
 }
 
-const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({ className }) => {
+const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({ 
+  className,
+  onShowVotingResults,
+  onShowAIGenerator,
+  onShowComments,
+  onShowSharing
+}) => {
   const [showCollaborators, setShowCollaborators] = useState(false);
   const [showGroups, setShowGroups] = useState(false);
   const [showTimer, setShowTimer] = useState(false);
@@ -64,6 +75,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({ className }
   
   const handleToggleAuthors = () => {
     setShowNotesAuthors(!showNotesAuthors);
+    toast.success(`${showNotesAuthors ? 'Autores ocultados' : 'Autores mostrados'} correctamente`);
   };
   
   const handleStartTimer = () => {
@@ -73,6 +85,31 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({ className }
     setTimeout(() => {
       setShowTimerNotification(true);
     }, 2000);
+  };
+
+  const handleShowVotingResults = () => {
+    setShowVoting(false);
+    if (onShowVotingResults) {
+      onShowVotingResults();
+    }
+  };
+
+  const handleShowAIGenerator = () => {
+    if (onShowAIGenerator) {
+      onShowAIGenerator();
+    }
+  };
+
+  const handleShowComments = () => {
+    if (onShowComments) {
+      onShowComments();
+    }
+  };
+
+  const handleShowSharing = () => {
+    if (onShowSharing) {
+      onShowSharing();
+    }
   };
   
   return (
@@ -145,7 +182,12 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({ className }
           
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-md">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-md"
+                onClick={handleShowComments}
+              >
                 <MessageCircle className="h-5 w-5" />
               </Button>
             </TooltipTrigger>
@@ -156,7 +198,12 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({ className }
           
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="default" size="icon" className="rounded-md bg-indigo-600 hover:bg-indigo-700">
+              <Button 
+                variant="default" 
+                size="icon" 
+                className="rounded-md bg-indigo-600 hover:bg-indigo-700"
+                onClick={handleShowSharing}
+              >
                 <Share2 className="h-5 w-5 text-white" />
               </Button>
             </TooltipTrigger>
@@ -167,12 +214,37 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({ className }
           
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="outline" size="icon" className="rounded-md">
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="rounded-md"
+                onClick={() => {
+                  toast.success('Enlace copiado al portapapeles');
+                }}
+              >
                 <Link2 className="h-5 w-5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="left">
               <p>Copiar enlace</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-md"
+                onClick={handleShowAIGenerator}
+              >
+                <div className="text-blue-500 flex items-center justify-center">
+                  <span className="text-lg">🐼</span>
+                </div>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="left">
+              <p>DupreeAI</p>
             </TooltipContent>
           </Tooltip>
         </div>
@@ -471,6 +543,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({ className }
                     <div 
                       key={index} 
                       className="p-3 border-l-4 border-indigo-600 bg-white hover:bg-gray-50 cursor-pointer flex justify-between items-center"
+                      onClick={handleShowVotingResults}
                     >
                       <div className="text-sm">{vote.name}</div>
                       <div className="text-xs text-gray-500">{vote.date}</div>
