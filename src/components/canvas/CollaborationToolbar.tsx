@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Users, 
@@ -13,7 +12,10 @@ import {
   ChevronDown,
   Sparkles,
   Inbox,
-  LayoutTemplate
+  LayoutTemplate,
+  Menu,
+  Search,
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import UserAvatar from '@/components/UserAvatar';
@@ -26,6 +28,29 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from 'sonner';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 
 interface CollaborationToolbarProps {
   onShowVotingResults: () => void;
@@ -50,6 +75,8 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
   const [minutes, setMinutes] = useState('30');
   const [seconds, setSeconds] = useState('00');
   const [timeIsRunning, setTimeIsRunning] = useState(false);
+  const [showCollaborators, setShowCollaborators] = useState(false);
+  const [showGroups, setShowGroups] = useState(false);
   
   const toggleAuthors = () => {
     setShowAuthors(!showAuthors);
@@ -88,233 +115,113 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
     setTimeIsRunning(false);
     toast('Temporizador cancelado');
   };
+
+  const handleCollaboratorsClick = () => {
+    setShowCollaborators(!showCollaborators);
+  };
+
+  const handleGroupsClick = () => {
+    setShowGroups(!showGroups);
+  };
+
+  const mockCollaborators = [
+    { id: '1', name: 'GIUSEPPE PIMINCHUMO LEYVA', avatar: '/lovable-uploads/cd62cb53-a08a-4049-b537-c910fa5ed4ca.png', permission: 'owner' as const },
+    { id: '2', name: 'CARLOS ANTONIO LUJAN', avatar: '/lovable-uploads/cd62cb53-a08a-4049-b537-c910fa5ed4ca.png', permission: 'edit' as const },
+    { id: '3', name: 'MANUEL URIBEN', avatar: '/lovable-uploads/cd62cb53-a08a-4049-b537-c910fa5ed4ca.png', permission: 'edit' as const },
+    { id: '4', name: 'JORGE CENTURION', avatar: 'https://i.pravatar.cc/150?img=33', permission: 'view' as const },
+    { id: '5', name: 'MARIA BECERRA', avatar: 'https://i.pravatar.cc/150?img=5', permission: 'view' as const }
+  ];
   
   return (
-    <div className="fixed top-16 right-4 z-10">
-      <div className="flex flex-col space-y-2">
+    <div className="absolute top-0 left-0 right-0 flex justify-between items-start p-4 z-50 pointer-events-none">
+      {/* Left menu */}
+      <div className="flex items-center space-x-2 pointer-events-auto">
+        <Button variant="outline" size="icon" className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white">
+          <Menu className="h-5 w-5" />
+        </Button>
+      </div>
+
+      {/* Right menu */}
+      <div className="flex items-center space-x-2 pointer-events-auto">
         <div className="relative group">
           <div className="absolute top-0 right-0 -mt-1 -mr-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-          <UserAvatar showCollaborators={true} size="lg" className="cursor-pointer" />
+          <UserAvatar showCollaborators={true} size="sm" className="cursor-pointer" />
           
-          <div className="absolute top-0 right-12 mt-1 p-2 bg-white shadow-lg rounded-lg invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 w-max">
+          <div className="absolute top-full right-0 mt-2 p-2 bg-white/80 backdrop-blur-sm shadow-lg rounded-lg invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 w-max">
             <span className="text-sm font-medium">5 usuarios conectados</span>
           </div>
         </div>
-        
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon" className="bg-white shadow-sm">
+            <Button variant="outline" size="icon" className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white">
               <Users className="h-5 w-5" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>Colaboradores</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <div className="max-h-[250px] overflow-y-auto">
-              <div className="px-2 py-1.5">
-                <div className="relative mb-2">
-                  <input 
-                    type="text" 
-                    placeholder="Buscar colaborador..."
-                    className="w-full border rounded-md px-2 py-1 text-sm"
-                  />
-                  <svg className="absolute right-2 top-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-                
-                <div className="space-y-1">
-                  <DropdownMenuItem>
-                    <div className="flex items-center">
-                      <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center mr-2 text-xs font-medium text-indigo-800">
-                        GP
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-sm">Giuseppe Piminchumo</div>
-                        <div className="text-xs text-gray-500">Owner</div>
-                      </div>
-                      <button className="text-xs text-blue-500 hover:text-blue-700">
-                        Seguir
-                      </button>
-                    </div>
-                  </DropdownMenuItem>
-                  
-                  <DropdownMenuItem>
-                    <div className="flex items-center">
-                      <div className="w-7 h-7 rounded-full bg-purple-100 flex items-center justify-center mr-2 text-xs font-medium text-purple-800">
-                        CL
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-sm">Carlos Lujan</div>
-                        <div className="text-xs text-gray-500">Editor</div>
-                      </div>
-                      <button className="text-xs text-blue-500 hover:text-blue-700">
-                        Seguir
-                      </button>
-                    </div>
-                  </DropdownMenuItem>
-                  
-                  <DropdownMenuItem>
-                    <div className="flex items-center">
-                      <div className="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center mr-2 text-xs font-medium text-green-800">
-                        MU
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-sm">Manuel Uriben</div>
-                        <div className="text-xs text-gray-500">Editor</div>
-                      </div>
-                      <button className="text-xs text-blue-500 hover:text-blue-700">
-                        Seguir
-                      </button>
-                    </div>
-                  </DropdownMenuItem>
-                </div>
+          <DropdownMenuContent align="end" className="w-80">
+            <div className="p-4">
+              <div className="flex items-center mb-4">
+                <UserAvatar size="sm" />
+                <h3 className="ml-3 font-medium text-sm">GIUSEPPE PIMINCHUMO</h3>
               </div>
+              
+              <div className="relative mb-4">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
+                <Input placeholder="Buscar a alguien para seguir" className="pl-9" />
+              </div>
+
+              <div className="max-h-[200px] overflow-y-auto space-y-2 mb-4">
+                {mockCollaborators.map((collaborator) => (
+                  <div key={collaborator.id} className="flex items-center p-2 hover:bg-gray-100 rounded-md cursor-pointer">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={collaborator.avatar} alt={collaborator.name} />
+                      <AvatarFallback>{collaborator.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                    </Avatar>
+                    <span className="ml-3 font-medium text-sm">{collaborator.name}</span>
+                  </div>
+                ))}
+              </div>
+
+              <Button 
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white" 
+                onClick={handleGroupsClick}
+              >
+                Gestionar grupos
+              </Button>
             </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => toast('Función no implementada')}>
-              <UserPlus className="h-4 w-4 mr-2" />
-              <span>Administrar Grupos</span>
-            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         
         <Button 
           variant="outline" 
           size="icon" 
-          className="bg-white shadow-sm"
+          className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white"
           onClick={onShowComments}
         >
           <MessageSquare className="h-5 w-5" />
         </Button>
         
-        {!timeIsRunning ? (
-          <div className="relative">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="bg-white shadow-sm"
-              onClick={toggleTimer}
-            >
-              <TimerReset className="h-5 w-5" />
-            </Button>
-            
-            {showTimer && (
-              <div className="absolute right-12 top-0 bg-white rounded-lg shadow-lg p-3 w-64">
-                <h3 className="text-sm font-medium mb-2">Configurar temporizador</h3>
-                <div className="flex space-x-2 mb-3">
-                  <div className="flex-1">
-                    <label className="text-xs text-gray-500 mb-1 block">Horas</label>
-                    <select 
-                      className="w-full border rounded-md p-1 text-sm"
-                      value={hours}
-                      onChange={(e) => setHours(e.target.value)}
-                    >
-                      {[...Array(24)].map((_, i) => (
-                        <option key={i} value={i.toString().padStart(2, '0')}>
-                          {i.toString().padStart(2, '0')}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="flex-1">
-                    <label className="text-xs text-gray-500 mb-1 block">Minutos</label>
-                    <select 
-                      className="w-full border rounded-md p-1 text-sm"
-                      value={minutes}
-                      onChange={(e) => setMinutes(e.target.value)}
-                    >
-                      {[...Array(60)].map((_, i) => (
-                        <option key={i} value={i.toString().padStart(2, '0')}>
-                          {i.toString().padStart(2, '0')}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="flex-1">
-                    <label className="text-xs text-gray-500 mb-1 block">Segundos</label>
-                    <select 
-                      className="w-full border rounded-md p-1 text-sm"
-                      value={seconds}
-                      onChange={(e) => setSeconds(e.target.value)}
-                    >
-                      {[...Array(60)].map((_, i) => (
-                        <option key={i} value={i.toString().padStart(2, '0')}>
-                          {i.toString().padStart(2, '0')}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={toggleTimer}
-                    className="text-xs h-8"
-                  >
-                    Cancelar
-                  </Button>
-                  <Button 
-                    onClick={handleStartTimer}
-                    size="sm"
-                    className="text-xs h-8 bg-indigo-600 hover:bg-indigo-700 text-white"
-                  >
-                    Iniciar
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          <Button 
-            variant="outline" 
-            size="icon" 
-            className="bg-red-50 border-red-300 text-red-600 shadow-sm relative animate-pulse"
-            onClick={handleCancelTimer}
-          >
-            <CalendarClock className="h-5 w-5" />
-            <span className="sr-only">Cancelar temporizador</span>
-          </Button>
-        )}
-        
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon" className="bg-white shadow-sm">
-              <Vote className="h-5 w-5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>Votación</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => toast('Función no implementada')}>
-              <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              <span>Crear nueva votación</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onSelect={onShowVotingResults}>
-              <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-              <span>Ver resultados</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        
         <Button 
           variant="outline" 
           size="icon" 
-          className="bg-white shadow-sm"
-          onClick={toggleAuthors}
+          className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white"
         >
-          <EyeOff className="h-5 w-5" />
+          <TimerReset className="h-5 w-5" />
         </Button>
         
         <Button 
           variant="outline" 
           size="icon" 
-          className="bg-white shadow-sm"
+          className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white"
+          onClick={onShowVotingResults}
+        >
+          <Vote className="h-5 w-5" />
+        </Button>
+        
+        <Button 
+          variant="outline" 
+          size="icon" 
+          className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white"
           onClick={onShowAIGenerator}
         >
           <Sparkles className="h-5 w-5" />
@@ -323,7 +230,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
         <Button 
           variant="outline" 
           size="icon" 
-          className="bg-white shadow-sm"
+          className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white"
           onClick={onShowEficientisIntegration}
         >
           <Inbox className="h-5 w-5" />
@@ -332,7 +239,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
         <Button 
           variant="outline" 
           size="icon" 
-          className="bg-white shadow-sm"
+          className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white"
           onClick={onShowTemplates}
         >
           <LayoutTemplate className="h-5 w-5" />
@@ -340,37 +247,82 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
         
         <Button 
           variant="default" 
-          className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm gap-1"
+          className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white text-black gap-1"
           onClick={onShowSharing}
         >
           <Share2 className="h-4 w-4" />
           <span>Compartir</span>
         </Button>
-        
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon" className="bg-white shadow-sm">
-              <Settings className="h-5 w-5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Opciones del tablero</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => toast('Función no implementada')}>
-              Ver detalles
-            </DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => toast('Función no implementada')}>
-              Historial de cambios
-            </DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => toast('Función no implementada')}>
-              Exportar tablero
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => toast('Función no implementada')}>
-              Configuración
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+
+        {/* Groups Management Panel */}
+        {showGroups && (
+          <div className="absolute top-0 right-16 w-80 bg-white rounded-lg shadow-lg">
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold">GRUPOS</h3>
+                <Button variant="ghost" size="icon" onClick={() => setShowGroups(false)}>
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <select className="w-full h-10 px-3 py-2 bg-gray-200 rounded-md">
+                    <option>G1 - Area de Desarrollo Software</option>
+                  </select>
+                  <div className="flex items-center mt-2 p-2 bg-gray-50 rounded-md">
+                    <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+                      <UserPlus className="h-5 w-5 text-gray-600" />
+                    </div>
+                    <span className="ml-3 font-medium">Agregar un miembro</span>
+                  </div>
+                </div>
+
+                <select className="w-full h-10 px-3 py-2 bg-gray-200 rounded-md">
+                  <option>G2 - Area de marketing</option>
+                </select>
+
+                <select className="w-full h-10 px-3 py-2 bg-gray-200 rounded-md">
+                  <option>G3 - Area de administracion</option>
+                </select>
+
+                <select className="w-full h-10 px-3 py-2 bg-gray-200 rounded-md">
+                  <option>G4 - Area de Diseño Software</option>
+                </select>
+
+                <div className="flex items-center justify-between">
+                  <span>Carlos Lujan</span>
+                  <span className="text-gray-500">Mover</span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span>Manuel Uriben</span>
+                  <span className="text-gray-500">Mover</span>
+                </div>
+
+                <Separator />
+
+                <h3 className="font-bold">Participantes</h3>
+
+                <div className="relative">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
+                  <Input placeholder="Buscar..." className="pl-9" />
+                </div>
+
+                <div className="max-h-40 overflow-y-auto space-y-2">
+                  <div>Jorge Centurion</div>
+                  <div>Julio Gutierrez</div>
+                  <div>Carlos Antonio</div>
+                  <div>Giuseppe Piminchumo</div>
+                </div>
+
+                <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
+                  Guardar grupos
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -30,7 +30,12 @@ const CanvasPage = () => {
   const [showTemplates, setShowTemplates] = useState(false);
   const [isVotingOwner, setIsVotingOwner] = useState(false);
   
-  // Mock data for voting progress
+  const mockVoteItems = [
+    { id: '1', content: 'Incremento en costos de materias primas', votes: 0 },
+    { id: '2', content: 'Expansión a nuevos mercados internacionales', votes: 0 },
+    { id: '3', content: 'Alta diversificación en líneas de productos', votes: 0 },
+  ];
+
   const mockVoters = [
     { id: '1', name: 'Julio Maisini', avatar: '', hasVoted: true, votesUsed: 5, totalVotes: 5 },
     { id: '2', name: 'Morti Cesar', avatar: '', hasVoted: false, votesUsed: 3, totalVotes: 5 },
@@ -38,7 +43,6 @@ const CanvasPage = () => {
     { id: '4', name: 'Dante Aguilar', avatar: '', hasVoted: true, votesUsed: 5, totalVotes: 5 },
   ];
   
-  // Mock data for voting results with avatars
   const mockVoteItemsWithVoters = [
     { 
       id: '1', 
@@ -93,7 +97,6 @@ const CanvasPage = () => {
     },
   ];
 
-  // Mock data for statistics
   const mockStatisticsItems: StatisticItem[] = [
     { id: '1', content: 'Competencia con precios más bajos.', percentage: 67, category: "amenazas", color: 'bg-red-500' },
     { id: '2', content: 'Expansión a nuevos mercados internacionales.', percentage: 60, category: "oportunidades", color: 'bg-blue-500' },
@@ -107,7 +110,6 @@ const CanvasPage = () => {
     { id: '10', content: 'Riesgo de fluctuación en el tipo de cambio.', percentage: 4, category: "amenazas", color: 'bg-red-500' },
   ];
 
-  // Mock comments data
   const mockComments = [
     {
       id: '1',
@@ -144,7 +146,6 @@ const CanvasPage = () => {
     }
   ];
 
-  // Mock collaborators data
   const mockCollaborators = [
     { id: '1', name: 'GIUSEPPE PIMINCHUMO LEYVA', avatar: '/lovable-uploads/cd62cb53-a08a-4049-b537-c910fa5ed4ca.png', permission: 'owner' as const },
     { id: '2', name: 'CARLOS ANTONIO LUJAN', avatar: '/lovable-uploads/cd62cb53-a08a-4049-b537-c910fa5ed4ca.png', permission: 'edit' as const },
