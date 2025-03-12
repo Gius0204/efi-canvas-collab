@@ -94,10 +94,11 @@ const CanvasHeader: React.FC<CanvasHeaderProps> = ({ title }) => {
     <TooltipProvider>
       {/* <header className="flex items-center justify-between px-4 py-2 bg-white border-b"> */}
         <div className="absolute top-4 left-4 bg-white rounded-lg shadow-md p-2 flex flex-col space-y-2 z-50">
+        <div className="flex items-center">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Link to="/" className="p-2 rounded-full hover:bg-gray-100 inline-flex items-center">
-              <svg className="h-6 w-6 text-efi-red" viewBox="0 0 24 24" fill="currentColor">
+              <Link to="/" className="p-2 rounded-full hover:bg-gray-100 inline-flex items-center justify-center">
+              <svg className="h-6 w-6 text-efi-red self-center" viewBox="0 0 24 24" fill="currentColor">
                 <circle cx="12" cy="12" r="10" />
                 <text x="12" y="16" textAnchor="middle" fontSize="12" fill="white" fontWeight="bold">E</text>
               </svg>
@@ -109,7 +110,7 @@ const CanvasHeader: React.FC<CanvasHeaderProps> = ({ title }) => {
           </Tooltip>
           
             
-            <div className="flex items-center">
+            
               {isEditingTitle ? (
                 <div className="flex items-center">
                   <Input
