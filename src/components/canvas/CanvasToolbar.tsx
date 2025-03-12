@@ -25,6 +25,7 @@ interface ToolbarProps {
   showShapesOptions: boolean;
   setShowShapesOptions: (show: boolean) => void;
   onStickyColorSelect: (color: string) => void;
+  onShowEficientisIntegration: () => void;
 }
 
 const CanvasToolbar: React.FC<ToolbarProps> = ({
@@ -36,7 +37,8 @@ const CanvasToolbar: React.FC<ToolbarProps> = ({
   setShowStickyOptions,
   showShapesOptions,
   setShowShapesOptions,
-  onStickyColorSelect
+  onStickyColorSelect,
+  onShowEficientisIntegration
 }) => {
   const handleToolClick = (tool: string) => {
     setActiveTool(tool);
@@ -343,12 +345,12 @@ const CanvasToolbar: React.FC<ToolbarProps> = ({
             </Tooltip>
           </div>
           
-          {/* Jira Integration */}
+          {/* Eficientis Integration */}
           <div>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
-                  onClick={() => handleToolClick(isJiraActive ? '' : 'jira')}
+                  onClick={onShowEficientisIntegration}
                   className={`p-2 rounded-full ${isJiraActive ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
                 >
                   <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -358,7 +360,7 @@ const CanvasToolbar: React.FC<ToolbarProps> = ({
                 </button>
               </TooltipTrigger>
               <TooltipContent side="top">
-                <p>Integración Jira</p>
+                <p>Integración Eficientis</p>
               </TooltipContent>
             </Tooltip>
           </div>

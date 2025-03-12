@@ -1,7 +1,9 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import CanvasHeader from '@/components/canvas/CanvasHeader';
 import Canvas from '@/components/canvas/Canvas';
+import CanvasToolbar from '@/components/canvas/CanvasToolbar';
 import CollaborationToolbar from '@/components/canvas/CollaborationToolbar';
 import VotingNotification from '@/components/canvas/VotingNotification';
 import VotingProgressPanel from '@/components/canvas/VotingProgressPanel';
@@ -29,6 +31,15 @@ const CanvasPage = () => {
   const [showEficientisIntegration, setShowEficientisIntegration] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [isVotingOwner, setIsVotingOwner] = useState(false);
+  const [activeTool, setActiveTool] = useState('');
+  const [showPenOptions, setShowPenOptions] = useState(false);
+  const [showStickyOptions, setShowStickyOptions] = useState(false);
+  const [showShapesOptions, setShowShapesOptions] = useState(false);
+  
+  const handleStickyColorSelect = (color: string) => {
+    // In a real app, this would set up the sticky note color
+    toast.success(`Color seleccionado: ${color}`);
+  };
   
   const mockVoteItems = [
     { id: '1', content: 'Incremento en costos de materias primas', votes: 0 },
@@ -266,24 +277,12 @@ const CanvasPage = () => {
     setShowAIGenerator(false);
   };
 
-  const handleGenerateAI = (prompt: string, template: string) => {
-    toast.success(`Generando ${template} con prompt: "${prompt.substring(0, 20)}..."`);
-  };
-
   const handleShowComments = () => {
     setShowComments(true);
   };
 
   const handleCloseComments = () => {
     setShowComments(false);
-  };
-
-  const handleAddComment = (content: string, isChat: boolean) => {
-    toast.success(isChat ? 'Mensaje enviado al chat' : 'Comentario añadido correctamente');
-  };
-
-  const handleResolveComment = (id: string) => {
-    toast.success('Comentario marcado como resuelto');
   };
 
   const handleShowSharing = () => {
@@ -355,6 +354,19 @@ const CanvasPage = () => {
           onShowSharing={handleShowSharing}
           onShowEficientisIntegration={handleShowEficientisIntegration}
           onShowTemplates={handleShowTemplates}
+        />
+        
+        <CanvasToolbar
+          activeTool={activeTool}
+          setActiveTool={setActiveTool}
+          showPenOptions={showPenOptions}
+          setShowPenOptions={setShowPenOptions}
+          showStickyOptions={showStickyOptions}
+          setShowStickyOptions={setShowStickyOptions}
+          showShapesOptions={showShapesOptions}
+          setShowShapesOptions={setShowShapesOptions}
+          onStickyColorSelect={handleStickyColorSelect}
+          onShowEficientisIntegration={handleShowEficientisIntegration}
         />
         
         {showVotingNotification && (
