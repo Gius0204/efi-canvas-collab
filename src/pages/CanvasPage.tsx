@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import CanvasHeader from '@/components/canvas/CanvasHeader';
 import Canvas from '@/components/canvas/Canvas';
-//import CanvasToolbar from '@/components/canvas/CanvasToolbar';
 import CollaborationToolbar from '@/components/canvas/CollaborationToolbar';
 import VotingNotification from '@/components/canvas/VotingNotification';
 import VotingProgressPanel from '@/components/canvas/VotingProgressPanel';
@@ -12,7 +11,6 @@ import AIGeneratorPanel from '@/components/canvas/AIGeneratorPanel';
 import CommentsPanel from '@/components/canvas/CommentsPanel';
 import SharePanel from '@/components/canvas/SharePanel';
 import EficientisIntegrationPanel from '@/components/canvas/EficientisIntegrationPanel';
-import TemplatePanel from '@/components/canvas/TemplatePanel';
 import { toast } from 'sonner';
 import { StatisticItem } from '@/components/canvas/StatisticsPanel';
 
@@ -46,7 +44,6 @@ const CanvasPage = () => {
   const [showComments, setShowComments] = useState(false);
   const [showSharing, setShowSharing] = useState(false);
   const [showEficientisIntegration, setShowEficientisIntegration] = useState(false);
-  const [showTemplates, setShowTemplates] = useState(false);
   const [isVotingOwner, setIsVotingOwner] = useState(false);
   // const [activeTool, setActiveTool] = useState('');
   // const [showPenOptions, setShowPenOptions] = useState(false);
@@ -329,14 +326,6 @@ const CanvasPage = () => {
     setShowEficientisIntegration(false);
   };
 
-  const handleShowTemplates = () => {
-    setShowTemplates(true);
-  };
-
-  const handleCloseTemplates = () => {
-    setShowTemplates(false);
-  };
-
   const handleImportFromEficientis = () => {
     toast.success('Buscando e importando datos de Eficientis...');
     handleCloseEficientisIntegration();
@@ -384,7 +373,6 @@ const CanvasPage = () => {
           onShowComments={handleShowComments}
           onShowSharing={handleShowSharing}
           onShowEficientisIntegration={handleShowEficientisIntegration}
-          onShowTemplates={handleShowTemplates}
         />
         
         {/* <CanvasToolbar
@@ -475,11 +463,7 @@ const CanvasPage = () => {
           />
         )}
 
-        {showTemplates && (
-          <TemplatePanel
-            onClose={handleCloseTemplates}
-          />
-        )}
+        
       </div>
     </div>
   );

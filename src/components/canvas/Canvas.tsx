@@ -4,6 +4,7 @@ import { Canvas as FabricCanvas, Circle, Group, Line, Rect, Shadow, Textbox, Tri
 import CanvasToolbar from './CanvasToolbar';
 import { Minus, Plus } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import TemplatePanel from '@/components/canvas/TemplatePanel';
 
 const Canvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -124,7 +125,7 @@ const Canvas: React.FC = () => {
         addSection();
         break;
       case 'template':
-        setShowTemplates(true);
+        handleShowTemplates();
         break;
     }
   }, [activeTool, fabricCanvas]);
@@ -394,6 +395,10 @@ const Canvas: React.FC = () => {
     // This will be handled by CanvasPage.tsx
   };
 
+  const handleShowTemplates = () => {
+    setShowTemplates(true);
+  };
+
   const handleCloseTemplates = () => {
     setShowTemplates(false);
   };
@@ -414,6 +419,7 @@ const Canvas: React.FC = () => {
           setShowShapesOptions={setShowShapesOptions}
           onStickyColorSelect={handleStickyColorSelect}
           onShowEficientisIntegration={onShowEficientisIntegration}
+          onShowTemplates={handleShowTemplates}
         />
         
         <div className="fixed bottom-6 right-6 flex flex-col space-y-2">
@@ -444,33 +450,9 @@ const Canvas: React.FC = () => {
         </div>
 
         {showTemplates && (
-          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl p-6 z-50 w-96">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium">Plantillas</h3>
-              <button 
-                onClick={handleCloseTemplates} 
-                className="text-gray-500 hover:bg-gray-100 rounded-full p-1"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="border rounded-md p-3 hover:bg-gray-50 cursor-pointer">
-                <div className="text-sm font-medium">FODA</div>
-              </div>
-              <div className="border rounded-md p-3 hover:bg-gray-50 cursor-pointer">
-                <div className="text-sm font-medium">OKRs</div>
-              </div>
-              <div className="border rounded-md p-3 hover:bg-gray-50 cursor-pointer">
-                <div className="text-sm font-medium">PESTEL</div>
-              </div>
-              <div className="border rounded-md p-3 hover:bg-gray-50 cursor-pointer">
-                <div className="text-sm font-medium">Mapa Estratégico</div>
-              </div>
-            </div>
-          </div>
+          <TemplatePanel
+            onClose={handleCloseTemplates}
+          />
         )}
       </div>
     </TooltipProvider>

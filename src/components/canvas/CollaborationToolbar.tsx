@@ -63,7 +63,6 @@ interface CollaborationToolbarProps {
   onShowComments: () => void;
   onShowSharing: () => void;
   onShowEficientisIntegration: () => void;
-  onShowTemplates: () => void;
 }
 
 const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
@@ -71,8 +70,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
   onShowAIGenerator,
   onShowComments,
   onShowSharing,
-  onShowEficientisIntegration,
-  onShowTemplates
+  onShowEficientisIntegration
 }) => {
   const [showAuthors, setShowAuthors] = useState(true);
   const [showTimer, setShowTimer] = useState(false);

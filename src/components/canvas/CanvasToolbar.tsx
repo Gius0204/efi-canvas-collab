@@ -26,6 +26,7 @@ interface ToolbarProps {
   setShowShapesOptions: (show: boolean) => void;
   onStickyColorSelect: (color: string) => void;
   onShowEficientisIntegration: () => void;
+  onShowTemplates: () => void;
 }
 
 const CanvasToolbar: React.FC<ToolbarProps> = ({
@@ -38,7 +39,8 @@ const CanvasToolbar: React.FC<ToolbarProps> = ({
   showShapesOptions,
   setShowShapesOptions,
   onStickyColorSelect,
-  onShowEficientisIntegration
+  onShowEficientisIntegration,
+  onShowTemplates
 }) => {
   const handleToolClick = (tool: string) => {
     setActiveTool(tool);
