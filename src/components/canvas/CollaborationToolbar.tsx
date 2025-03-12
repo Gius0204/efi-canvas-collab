@@ -20,6 +20,7 @@ import {
   Eye
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Switch } from "@/components/ui/switch";
 import UserAvatar from '@/components/UserAvatar';
 import {
   DropdownMenu,
@@ -82,6 +83,8 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
   const [showCollaborators, setShowCollaborators] = useState(false);
   const [showGroups, setShowGroups] = useState(false);
   const [showTimerFinishedDialog, setShowTimerFinishedDialog] = useState(false);
+  const [votingTab, setVotingTab] = useState<'new' | 'results'>('new');
+  const [showVoting, setShowVoting] = useState(false);
   
   const toggleAuthors = () => {
     setShowAuthors(!showAuthors);
@@ -121,6 +124,20 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
 
   const handleGroupsClick = () => {
     setShowGroups(!showGroups);
+  };
+
+  const handleVotingClick = () => {
+    setShowVoting(!showVoting);
+    setShowCollaborators(false);
+    setShowGroups(false);
+    setShowTimer(false);
+  };
+
+  const handleShowVotingResults = () => {
+    setShowVoting(false);
+    if (onShowVotingResults) {
+      onShowVotingResults();
+    }
   };
 
   const mockCollaborators = [
@@ -433,6 +450,140 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
               </div>
             </div>
           )}
+
+          {/* Voting Panel */}
+         {showVoting && (
+           <div className="absolute top-0 right-16 w-80 bg-white rounded-lg shadow-lg overflow-hidden">
+             <div className="p-4">
+               <div className="flex items-center justify-between mb-4">
+                 <h3 className="text-lg font-medium">Votación</h3>
+                 <Button variant="ghost" size="icon" onClick={() => setShowVoting(false)}>
+                   <X className="h-5 w-5" />
+                 </Button>
+               </div>
+ 
+               <div className="grid grid-cols-2 gap-0.5 bg-gray-200 rounded-md mb-4">
+                 <Button 
+                   variant={votingTab === 'new' ? 'default' : 'ghost'} 
+                   className={`rounded-none ${votingTab === 'new' ? 'bg-white hover:bg-white text-black' : 'bg-gray-100'}`}
+                   onClick={() => setVotingTab('new')}
+                 >
+                   Nueva Sesión
+                 </Button>
+                 <Button 
+                   variant={votingTab === 'results' ? 'default' : 'ghost'} 
+                   className={`rounded-none ${votingTab === 'results' ? 'bg-white hover:bg-white text-black' : 'bg-gray-100'}`}
+                   onClick={() => setVotingTab('results')}
+                 >
+                   Resultados
+                 </Button>
+               </div>
+ 
+               {votingTab === 'new' ? (
+                 <div className="space-y-4">
+                   <div>
+                     <label className="block mb-2">Nombre de Sesión</label>
+                     <Input placeholder="Escribir nombre de votación" />
+                   </div>
+ 
+                   <div className="flex gap-4">
+                     <div className="w-1/2">
+                       <label className="block mb-2">Votos</label>
+                       <div className="flex items-center">
+                         <Button variant="outline" size="icon" className="h-8 w-8 rounded-full">-</Button>
+                         <span className="mx-3 font-bold">1</span>
+                         <Button variant="outline" size="icon" className="h-8 w-8 rounded-full">+</Button>
+                       </div>
+                     </div>
+ 
+                     <div className="w-1/2">
+                       <label className="block mb-2">Segundos</label>
+                       <div className="flex items-center">
+                         <Button variant="outline" size="icon" className="h-8 w-8 rounded-full">-</Button>
+                         <span className="mx-3 font-bold">1</span>
+                         <Button variant="outline" size="icon" className="h-8 w-8 rounded-full">+</Button>
+                       </div>
+                     </div>
+                   </div>
+ 
+                   <div className="flex items-center justify-between">
+                     <label>Múltiples votos por objeto</label>
+                     <Switch />
+                   </div>
+ 
+                   <div>
+                     <label className="block mb-2">Seleccionar área de votación</label>
+                     <Button variant="outline" className="w-full bg-gray-100">Seleccionar</Button>
+                   </div>
+ 
+                   <div className="bg-gray-100 p-3 rounded-md">
+                     <h4 className="font-bold mb-2">Filtros</h4>
+                     <div className="space-y-2">
+                       <div className="flex items-center justify-between">
+                         <label className="flex items-center">
+                           <input type="checkbox" className="mr-2" />
+                           Sticky Notes
+                         </label>
+                         <span>32</span>
+                       </div>
+                       <div className="flex items-center justify-between">
+                         <label className="flex items-center">
+                           <input type="checkbox" className="mr-2" />
+                           Formas
+                         </label>
+                         <span>12</span>
+                       </div>
+                       <div className="flex items-center justify-between">
+                         <label className="flex items-center">
+                           <input type="checkbox" className="mr-2" />
+                           Imágenes
+                         </label>
+                         <span>0</span>
+                       </div>
+                       <div className="flex items-center justify-between">
+                         <label className="flex items-center">
+                           <input type="checkbox" className="mr-2" />
+                           Textos
+                         </label>
+                         <span>0</span>
+                       </div>
+                       <div className="flex items-center justify-between">
+                         <label className="flex items-center">
+                           <input type="checkbox" className="mr-2" />
+                           Sections
+                         </label>
+                         <span>4</span>
+                       </div>
+                     </div>
+                   </div>
+ 
+                   <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
+                     Iniciar para todos
+                   </Button>
+                 </div>
+               ) : (
+                 <div className="space-y-2 max-h-96 overflow-y-auto">
+                   {[
+                     { name: 'Voten por las mejores opciones del FODA realizado', date: '15 Feb' },
+                     { name: 'Qué fortalezas y debilidades son más importantes en la empresa', date: '08 Feb' },
+                     { name: 'Votación 3', date: '01 Feb' },
+                     { name: 'Votación 2', date: '14 Ene' },
+                     { name: 'Cuales son las más importantes opciones de todos los FODAs', date: '03 Ene' }
+                   ].map((vote, index) => (
+                     <div 
+                       key={index} 
+                       className="p-3 border-l-4 border-indigo-600 bg-white hover:bg-gray-50 cursor-pointer flex justify-between items-center"
+                       onClick={handleShowVotingResults}
+                     >
+                       <div className="text-sm">{vote.name}</div>
+                       <div className="text-xs text-gray-500">{vote.date}</div>
+                     </div>
+                   ))}
+                 </div>
+               )}
+             </div>
+           </div>
+         )}
         </div>
       </div>
     </TooltipProvider>
