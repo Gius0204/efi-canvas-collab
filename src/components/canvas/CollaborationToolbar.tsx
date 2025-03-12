@@ -2,20 +2,22 @@ import React, { useState } from 'react';
 import { 
   Users, 
   MessageSquare, 
-  TimerReset, 
-  Vote, 
-  Settings, 
-  Share2, 
-  EyeOff, 
-  CalendarClock, 
-  UserPlus, 
+  TimerReset,
+  Vote,
+  Share2,
+  Pen,
+  PenTool,
+  Eraser,
+  Search,
+  X,
+  UserPlus,
   ChevronDown,
   Sparkles,
   Inbox,
   LayoutTemplate,
   Menu,
-  Search,
-  X
+  EyeOff,
+  CalendarClock
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import UserAvatar from '@/components/UserAvatar';
@@ -51,6 +53,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface CollaborationToolbarProps {
   onShowVotingResults: () => void;
@@ -69,23 +72,15 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
   onShowEficientisIntegration,
   onShowTemplates
 }) => {
-  const [showAuthors, setShowAuthors] = useState(true);
+  const [showPenOptions, setShowPenOptions] = useState(false);
   const [showTimer, setShowTimer] = useState(false);
+  const [showTimerDialog, setShowTimerDialog] = useState(false);
+  const [timeIsRunning, setTimeIsRunning] = useState(false);
   const [hours, setHours] = useState('00');
   const [minutes, setMinutes] = useState('30');
   const [seconds, setSeconds] = useState('00');
-  const [timeIsRunning, setTimeIsRunning] = useState(false);
   const [showCollaborators, setShowCollaborators] = useState(false);
   const [showGroups, setShowGroups] = useState(false);
-  
-  const toggleAuthors = () => {
-    setShowAuthors(!showAuthors);
-    toast(showAuthors ? 'Autores ocultos' : 'Autores visibles');
-  };
-
-  const toggleTimer = () => {
-    setShowTimer(!showTimer);
-  };
 
   const handleStartTimer = () => {
     if (hours === '00' && minutes === '00' && seconds === '00') {
@@ -97,23 +92,10 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
     setShowTimer(false);
     toast.success(`Temporizador iniciado: ${hours}:${minutes}:${seconds}`);
     
-    // In a real app, we would start a countdown timer here
-    // For this demo, we'll just simulate it ending after a few seconds
     setTimeout(() => {
       setTimeIsRunning(false);
-      toast('¡Tiempo finalizado!', {
-        duration: 5000,
-        action: {
-          label: 'Reiniciar',
-          onClick: () => handleStartTimer()
-        }
-      });
+      setShowTimerDialog(true);
     }, 5000);
-  };
-
-  const handleCancelTimer = () => {
-    setTimeIsRunning(false);
-    toast('Temporizador cancelado');
   };
 
   const handleCollaboratorsClick = () => {
@@ -131,14 +113,62 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
     { id: '4', name: 'JORGE CENTURION', avatar: 'https://i.pravatar.cc/150?img=33', permission: 'view' as const },
     { id: '5', name: 'MARIA BECERRA', avatar: 'https://i.pravatar.cc/150?img=5', permission: 'view' as const }
   ];
-  
+
   return (
     <div className="absolute top-0 left-0 right-0 flex justify-between items-start p-4 z-50 pointer-events-none">
       {/* Left menu */}
       <div className="flex items-center space-x-2 pointer-events-auto">
-        <Button variant="outline" size="icon" className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white">
-          <Menu className="h-5 w-5" />
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline" size="icon" className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Menu</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+      <div className="flex items-center space-x-2 pointer-events-auto">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="icon"
+                className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white"
+                onClick={() => setShowPenOptions(!showPenOptions)}
+              >
+                <Pen className="h-5 w-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Herramientas de dibujo</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        {showPenOptions && (
+          <div className="absolute top-full left-0 mt-2 p-2 bg-white rounded-lg shadow-lg">
+            <div className="flex flex-col space-y-2">
+              <Button variant="ghost" className="justify-start">
+                <PenTool className="h-5 w-5 mr-2" />
+                <span>Lápiz</span>
+              </Button>
+              <Button variant="ghost" className="justify-start">
+                <Pen className="h-5 w-5 mr-2" />
+                <span>Marcador</span>
+              </Button>
+              <Button variant="ghost" className="justify-start">
+                <Eraser className="h-5 w-5 mr-2" />
+                <span>Borrador</span>
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Right menu */}
@@ -205,6 +235,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
           variant="outline" 
           size="icon" 
           className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white"
+          onClick={() => setShowTimer(!showTimer)}
         >
           <TimerReset className="h-5 w-5" />
         </Button>
@@ -225,15 +256,6 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
           onClick={onShowAIGenerator}
         >
           <Sparkles className="h-5 w-5" />
-        </Button>
-        
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white"
-          onClick={onShowEficientisIntegration}
-        >
-          <Inbox className="h-5 w-5" />
         </Button>
         
         <Button 
@@ -324,6 +346,24 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
           </div>
         )}
       </div>
+
+      <Dialog open={showTimerDialog} onOpenChange={setShowTimerDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>AVISO DE TIMER</DialogTitle>
+          </DialogHeader>
+          <div className="text-center p-6">
+            <p>El tiempo ha finalizado. te lo notificamos para que continúes con tus actividades</p>
+            <img src="/path-to-timer-image.png" alt="Timer" className="mx-auto my-4" />
+            <Button 
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+              onClick={() => setShowTimerDialog(false)}
+            >
+              Cerrar Notificación
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
