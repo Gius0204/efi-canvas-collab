@@ -1,3 +1,4 @@
+
 import React, { useRef, useState, useEffect } from 'react';
 import { Canvas as FabricCanvas, Circle, Group, Line, Rect, Shadow, Textbox, Triangle } from 'fabric';
 import CanvasToolbar from './CanvasToolbar';
@@ -12,6 +13,7 @@ const Canvas: React.FC = () => {
   const [showPenOptions, setShowPenOptions] = useState(false);
   const [showStickyOptions, setShowStickyOptions] = useState(false);
   const [showShapesOptions, setShowShapesOptions] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -120,6 +122,9 @@ const Canvas: React.FC = () => {
         break;
       case 'section':
         addSection();
+        break;
+      case 'template':
+        setShowTemplates(true);
         break;
     }
   }, [activeTool, fabricCanvas]);
@@ -385,7 +390,12 @@ const Canvas: React.FC = () => {
   };
 
   const onShowEficientisIntegration = () => {
-    // Implement integration logic here
+    // Pass this function up to the parent component
+    // This will be handled by CanvasPage.tsx
+  };
+
+  const handleCloseTemplates = () => {
+    setShowTemplates(false);
   };
 
   return (
@@ -432,6 +442,36 @@ const Canvas: React.FC = () => {
             </TooltipContent>
           </Tooltip>
         </div>
+
+        {showTemplates && (
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl p-6 z-50 w-96">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-medium">Plantillas</h3>
+              <button 
+                onClick={handleCloseTemplates} 
+                className="text-gray-500 hover:bg-gray-100 rounded-full p-1"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="border rounded-md p-3 hover:bg-gray-50 cursor-pointer">
+                <div className="text-sm font-medium">FODA</div>
+              </div>
+              <div className="border rounded-md p-3 hover:bg-gray-50 cursor-pointer">
+                <div className="text-sm font-medium">OKRs</div>
+              </div>
+              <div className="border rounded-md p-3 hover:bg-gray-50 cursor-pointer">
+                <div className="text-sm font-medium">PESTEL</div>
+              </div>
+              <div className="border rounded-md p-3 hover:bg-gray-50 cursor-pointer">
+                <div className="text-sm font-medium">Mapa Estratégico</div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </TooltipProvider>
   );

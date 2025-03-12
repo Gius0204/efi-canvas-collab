@@ -20,7 +20,18 @@ interface VoteItem {
   id: string;
   content: string;
   votes: number;
-  color?: string;
+  color: string;
+}
+
+interface VoteItemWithVoters {
+  id: string;
+  content: string;
+  votes: number;
+  color: string;
+  voters: {
+    name: string;
+    avatar: string;
+  }[];
 }
 
 const CanvasPage = () => {
@@ -59,7 +70,7 @@ const CanvasPage = () => {
     { id: '4', name: 'Dante Aguilar', avatar: '', hasVoted: true, votesUsed: 5, totalVotes: 5 },
   ];
   
-  const mockVoteItemsWithVoters = [
+  const mockVoteItemsWithVoters: VoteItemWithVoters[] = [
     { 
       id: '1', 
       content: 'Incremento en costos de materias primas.', 
@@ -475,3 +486,4 @@ const CanvasPage = () => {
 };
 
 export default CanvasPage;
+
