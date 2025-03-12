@@ -148,7 +148,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
   
   return (
     <TooltipProvider>
-      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-md p-2 flex space-x-2 z-50">
+      <div className="absolute top-4 left-1/2 transform -translate-x-2/3 bg-white rounded-lg shadow-md p-2 flex space-x-2 z-50">
 
         {/* Right menu */}
         <div className="flex items-center space-x-2 pointer-events-auto">
@@ -187,9 +187,9 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
           <Tooltip>
             <TooltipTrigger asChild>
               <Button 
-                variant="outline" 
+                variant="ghost" 
                 size="icon" 
-                className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white transition-colors"
+                className="rounded-md hover:bg-gray-100"
                 onClick={toggleTimer}
               >
                 <TimerReset className="h-5 w-5" />
@@ -204,9 +204,9 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
   <TooltipTrigger asChild>
     <div className="relative">
       <Button 
-        variant="outline" 
+        variant="ghost" 
         size="icon" 
-        className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white transition-colors"
+        className="rounded-md hover:bg-gray-100"
         onClick={() => setShowVoting(true)} // Muestra el panel de votación
       >
         <Vote className="h-5 w-5" />
@@ -356,9 +356,9 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
           <Tooltip>
             <TooltipTrigger asChild>
               <Button 
-                variant="outline" 
+                variant="ghost" 
                 size="icon" 
-                className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white transition-colors"
+                className="rounded-md hover:bg-gray-100"
                 onClick={onShowAIGenerator}
               >
                 <Sparkles className="h-5 w-5" />
@@ -374,7 +374,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
               <Button 
                 variant="outline" 
                 size="icon" 
-                className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white transition-colors"
+                className="rounded-md hover:bg-gray-100"
                 onClick={toggleAuthors}
               >
                 {showAuthors ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
@@ -389,10 +389,10 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
             <TooltipTrigger asChild>
               <Button 
                 variant="default" 
-                className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white text-black gap-1 transition-colors"
+                className="rounded-md bg-indigo-600 hover:bg-indigo-700"
                 onClick={onShowSharing}
               >
-                <Share2 className="h-4 w-4 mr-1" />
+                <Share2 className="h-5 w-5 text-white" />
                 <span>Compartir</span>
               </Button>
             </TooltipTrigger>
