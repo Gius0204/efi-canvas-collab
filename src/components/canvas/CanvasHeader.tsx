@@ -96,20 +96,18 @@ const CanvasHeader: React.FC<CanvasHeaderProps> = ({ title }) => {
         <div className="absolute top-4 left-4 bg-white rounded-lg shadow-md p-2 flex flex-col space-y-2 z-50">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Link to="/" className="p-1.5 mr-2 rounded-full hover:bg-gray-100">
-                <ArrowLeft className="h-5 w-5" />
+              <Link to="/" className="p-2 rounded-full hover:bg-gray-100 inline-flex items-center">
+              <svg className="h-6 w-6 text-efi-red" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="10" />
+                <text x="12" y="16" textAnchor="middle" fontSize="12" fill="white" fontWeight="bold">E</text>
+              </svg>
               </Link>
             </TooltipTrigger>
-            <TooltipContent side="bottom">
+            <TooltipContent side="right">
               <p>Volver a inicio</p>
             </TooltipContent>
           </Tooltip>
           
-          <div className="flex items-center">
-            <svg className="h-6 w-6 mr-2 text-efi-red" viewBox="0 0 24 24" fill="currentColor">
-              <circle cx="12" cy="12" r="10" />
-              <text x="12" y="16" textAnchor="middle" fontSize="12" fill="white" fontWeight="bold">E</text>
-            </svg>
             
             <div className="flex items-center">
               {isEditingTitle ? (
@@ -381,7 +379,6 @@ const CanvasHeader: React.FC<CanvasHeaderProps> = ({ title }) => {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-          </div>
         </div>
         
         {/* <div className="flex items-center space-x-2">
