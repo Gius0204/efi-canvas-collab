@@ -173,7 +173,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="rounded-md hover:border hover:border-gray-100 hover:bg-white hover:shadow-sm"
+                className="rounded-md hover:border hover:border-#e2e8f0-300 hover:bg-gray-100 hover:shadow-sm"
                 onClick={onShowComments}
               >
                 <MessageSquare className="h-5 w-5" />
