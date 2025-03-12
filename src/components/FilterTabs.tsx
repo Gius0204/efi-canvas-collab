@@ -43,7 +43,7 @@ const FilterTabs: React.FC<FilterTabsProps> = ({
         </Button>
       </div>
       
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2 ml-6">
         <span className="text-sm text-gray-500">Filtrar por:</span>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
