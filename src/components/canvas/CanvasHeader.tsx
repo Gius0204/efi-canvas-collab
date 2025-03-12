@@ -475,17 +475,6 @@ const CanvasHeader: React.FC<CanvasHeaderProps> = ({ title }) => {
                 <p>Usuario C está editando</p>
               </TooltipContent>
             </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="sm" className="ml-1 h-8">
-                  <Users className="h-4 w-4 mr-1" />
-                  <span>Colaborar</span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <p>Invitar colaboradores</p>
-              </TooltipContent>
-            </Tooltip>
           </div>
         </div>
       </header>
