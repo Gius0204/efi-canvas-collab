@@ -173,7 +173,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="rounded-md hover:border hover:border-#e2e8f0-300 hover:bg-gray-100 hover:shadow-sm"
+                className="rounded-md hover:border hover:border-gray-400 hover:bg-gray-100 hover:shadow-sm"
                 onClick={onShowComments}
               >
                 <MessageSquare className="h-5 w-5" />
@@ -189,7 +189,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="rounded-md hover:bg-gray-100"
+                className="rounded-md hover:border hover:border-gray-400 hover:bg-gray-100 hover:shadow-sm"
                 onClick={toggleTimer}
               >
                 <TimerReset className="h-5 w-5" />
@@ -206,7 +206,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
       <Button 
         variant="ghost" 
         size="icon" 
-        className="rounded-md hover:bg-gray-100"
+        className="rounded-md hover:border hover:border-gray-400 hover:bg-gray-100 hover:shadow-sm"
         onClick={() => setShowVoting(true)} // Muestra el panel de votación
       >
         <Vote className="h-5 w-5" />
@@ -358,7 +358,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="rounded-md hover:bg-gray-100"
+                className="rounded-md hover:border hover:border-gray-400 hover:bg-gray-100 hover:shadow-sm"
                 onClick={onShowAIGenerator}
               >
                 <Sparkles className="h-5 w-5" />
@@ -374,7 +374,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="rounded-md hover:bg-gray-100"
+                className="rounded-md hover:border hover:border-gray-400 hover:bg-gray-100 hover:shadow-sm"
                 onClick={toggleAuthors}
               >
                 {showAuthors ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
