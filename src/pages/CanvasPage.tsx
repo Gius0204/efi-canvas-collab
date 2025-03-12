@@ -31,9 +31,9 @@ const CanvasPage = () => {
   const [isVotingOwner, setIsVotingOwner] = useState(false);
   
   const mockVoteItems = [
-    { id: '1', content: 'Incremento en costos de materias primas', votes: 0, color: 'bg-red-200' },
-    { id: '2', content: 'Expansión a nuevos mercados internacionales', votes: 0, color: 'bg-blue-200' },
-    { id: '3', content: 'Alta diversificación en líneas de productos', votes: 0, color: 'bg-yellow-200' },
+    { id: '1', content: 'Incremento en costos de materias primas', votes: 0 },
+    { id: '2', content: 'Expansión a nuevos mercados internacionales', votes: 0 },
+    { id: '3', content: 'Alta diversificación en líneas de productos', votes: 0 },
   ];
 
   const mockVoters = [
