@@ -63,6 +63,7 @@ interface CollaborationToolbarProps {
   onShowComments: () => void;
   onShowSharing: () => void;
   onShowEficientisIntegration: () => void;
+  onStartVoting: () => void;
 }
 
 const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
@@ -70,7 +71,8 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
   onShowAIGenerator,
   onShowComments,
   onShowSharing,
-  onShowEficientisIntegration
+  onShowEficientisIntegration,
+  onStartVoting
 }) => {
   const [showAuthors, setShowAuthors] = useState(true);
   const [showTimer, setShowTimer] = useState(false);
@@ -318,7 +320,9 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
                   </div>
                 </div>
 
-                <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
+                <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+                  onClick={onStartVoting}
+                >
                   Iniciar para todos
                 </Button>
               </div>

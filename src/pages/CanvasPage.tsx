@@ -229,13 +229,13 @@ const CanvasPage = () => {
     
     loadCanvas();
     
-    const votingNotificationTimer = setTimeout(() => {
-      setShowVotingNotification(true);
-    }, 5000);
+    // const votingNotificationTimer = setTimeout(() => {
+    //   setShowVotingNotification(true);
+    // }, 5000);
     
-    return () => {
-      clearTimeout(votingNotificationTimer);
-    };
+    // return () => {
+    //   clearTimeout(votingNotificationTimer);
+    // };
   }, [id]);
   
   const handleJoinVoting = () => {
@@ -373,6 +373,7 @@ const CanvasPage = () => {
           onShowComments={handleShowComments}
           onShowSharing={handleShowSharing}
           onShowEficientisIntegration={handleShowEficientisIntegration}
+          onStartVoting={() => setShowVotingNotification(true)}
         />
         
         {/* <CanvasToolbar
