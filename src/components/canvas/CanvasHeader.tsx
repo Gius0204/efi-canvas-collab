@@ -92,8 +92,8 @@ const CanvasHeader: React.FC<CanvasHeaderProps> = ({ title }) => {
   
   return (
     <TooltipProvider>
-      <header className="flex items-center justify-between px-4 py-2 bg-white border-b">
-        <div className="flex items-center">
+      {/* <header className="flex items-center justify-between px-4 py-2 bg-white border-b"> */}
+        <div className="absolute top-4 left-4 bg-white rounded-lg shadow-md p-2 flex flex-col space-y-2 z-50">
           <Tooltip>
             <TooltipTrigger asChild>
               <Link to="/" className="p-1.5 mr-2 rounded-full hover:bg-gray-100">
@@ -384,7 +384,7 @@ const CanvasHeader: React.FC<CanvasHeaderProps> = ({ title }) => {
           </div>
         </div>
         
-        <div className="flex items-center space-x-2">
+        {/* <div className="flex items-center space-x-2">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button 
@@ -476,8 +476,8 @@ const CanvasHeader: React.FC<CanvasHeaderProps> = ({ title }) => {
               </TooltipContent>
             </Tooltip>
           </div>
-        </div>
-      </header>
+        </div> */}
+      
     </TooltipProvider>
   );
 };
