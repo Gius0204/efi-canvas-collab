@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import CanvasHeader from '@/components/canvas/CanvasHeader';
 import Canvas from '@/components/canvas/Canvas';
-import CanvasToolbar from '@/components/canvas/CanvasToolbar';
+//import CanvasToolbar from '@/components/canvas/CanvasToolbar';
 import CollaborationToolbar from '@/components/canvas/CollaborationToolbar';
 import VotingNotification from '@/components/canvas/VotingNotification';
 import VotingProgressPanel from '@/components/canvas/VotingProgressPanel';
@@ -48,14 +48,14 @@ const CanvasPage = () => {
   const [showEficientisIntegration, setShowEficientisIntegration] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [isVotingOwner, setIsVotingOwner] = useState(false);
-  const [activeTool, setActiveTool] = useState('');
-  const [showPenOptions, setShowPenOptions] = useState(false);
-  const [showStickyOptions, setShowStickyOptions] = useState(false);
-  const [showShapesOptions, setShowShapesOptions] = useState(false);
+  // const [activeTool, setActiveTool] = useState('');
+  // const [showPenOptions, setShowPenOptions] = useState(false);
+  // const [showStickyOptions, setShowStickyOptions] = useState(false);
+  // const [showShapesOptions, setShowShapesOptions] = useState(false);
   
-  const handleStickyColorSelect = (color: string) => {
-    toast.success(`Color seleccionado: ${color}`);
-  };
+  // const handleStickyColorSelect = (color: string) => {
+  //   toast.success(`Color seleccionado: ${color}`);
+  // };
   
   const mockVoteItems: VoteItem[] = [
     { id: '1', content: 'Incremento en costos de materias primas', votes: 0, color: 'bg-red-200' },
@@ -387,7 +387,7 @@ const CanvasPage = () => {
           onShowTemplates={handleShowTemplates}
         />
         
-        <CanvasToolbar
+        {/* <CanvasToolbar
           activeTool={activeTool}
           setActiveTool={setActiveTool}
           showPenOptions={showPenOptions}
@@ -398,7 +398,7 @@ const CanvasPage = () => {
           setShowShapesOptions={setShowShapesOptions}
           onStickyColorSelect={handleStickyColorSelect}
           onShowEficientisIntegration={handleShowEficientisIntegration}
-        />
+        /> */}
         
         {showVotingNotification && (
           <VotingNotification 
