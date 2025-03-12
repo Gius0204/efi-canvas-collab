@@ -148,7 +148,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
   
   return (
     <TooltipProvider>
-      <div className="absolute top-4 left-1/2 transform -translate-x-2/3 bg-white rounded-lg shadow-md p-2 flex space-x-2 z-50">
+      <div className="absolute top-4 right-4 bg-white rounded-lg shadow-md p-2 flex space-x-2 z-50">
 
         {/* Right menu */}
         <div className="flex items-center space-x-2 pointer-events-auto">
@@ -173,7 +173,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="rounded-md hover:bg-gray-100"
+                className="rounded-md hover:border hover:border-gray-100 hover:bg-white hover:shadow-sm"
                 onClick={onShowComments}
               >
                 <MessageSquare className="h-5 w-5" />
@@ -372,7 +372,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
           <Tooltip>
             <TooltipTrigger asChild>
               <Button 
-                variant="outline" 
+                variant="ghost" 
                 size="icon" 
                 className="rounded-md hover:bg-gray-100"
                 onClick={toggleAuthors}
