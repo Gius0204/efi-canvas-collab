@@ -21,7 +21,7 @@ const Canvas: React.FC = () => {
 
     const canvas = new FabricCanvas(canvasRef.current, {
       width: window.innerWidth,
-      height: window.innerHeight - 60,
+      height: window.innerHeight,
       backgroundColor: '#f8f9fa',
       selection: true,
       preserveObjectStacking: true,
@@ -51,7 +51,7 @@ const Canvas: React.FC = () => {
 
     const handleResize = () => {
       canvas.setWidth(window.innerWidth);
-      canvas.setHeight(window.innerHeight - 60);
+      canvas.setHeight(window.innerHeight);
       canvas.renderAll();
     };
 
@@ -406,7 +406,7 @@ const Canvas: React.FC = () => {
   return (
     <TooltipProvider>
       <div className="relative h-full w-full">
-        <canvas ref={canvasRef} className="absolute top-0 left-0" />
+        <canvas ref={canvasRef} className="w-full h-full" />
         
         <CanvasToolbar 
           activeTool={activeTool}
