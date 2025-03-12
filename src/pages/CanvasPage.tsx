@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import CanvasHeader from '@/components/canvas/CanvasHeader';
@@ -16,6 +15,13 @@ import EficientisIntegrationPanel from '@/components/canvas/EficientisIntegratio
 import TemplatePanel from '@/components/canvas/TemplatePanel';
 import { toast } from 'sonner';
 import { StatisticItem } from '@/components/canvas/StatisticsPanel';
+
+interface VoteItem {
+  id: string;
+  content: string;
+  votes: number;
+  color?: string;
+}
 
 const CanvasPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -37,14 +43,13 @@ const CanvasPage = () => {
   const [showShapesOptions, setShowShapesOptions] = useState(false);
   
   const handleStickyColorSelect = (color: string) => {
-    // In a real app, this would set up the sticky note color
     toast.success(`Color seleccionado: ${color}`);
   };
   
-  const mockVoteItems = [
-    { id: '1', content: 'Incremento en costos de materias primas', votes: 0 },
-    { id: '2', content: 'Expansión a nuevos mercados internacionales', votes: 0 },
-    { id: '3', content: 'Alta diversificación en líneas de productos', votes: 0 },
+  const mockVoteItems: VoteItem[] = [
+    { id: '1', content: 'Incremento en costos de materias primas', votes: 0, color: 'bg-red-200' },
+    { id: '2', content: 'Expansión a nuevos mercados internacionales', votes: 0, color: 'bg-blue-200' },
+    { id: '3', content: 'Alta diversificación en líneas de productos', votes: 0, color: 'bg-yellow-200' },
   ];
 
   const mockVoters = [
@@ -329,6 +334,21 @@ const CanvasPage = () => {
   const handleCreateBoardForEficientis = () => {
     toast.success('Creando nuevo board para Eficientis...');
     handleCloseEficientisIntegration();
+  };
+
+  const handleGenerateAI = (prompt: string) => {
+    toast.success(`Generando con IA: ${prompt}`);
+    setTimeout(() => {
+      handleCloseAIGenerator();
+    }, 2000);
+  };
+
+  const handleAddComment = (comment: string) => {
+    toast.success(`Comentario añadido: ${comment}`);
+  };
+
+  const handleResolveComment = (id: string) => {
+    toast.success(`Comentario ${id} resuelto`);
   };
 
   if (isLoading) {

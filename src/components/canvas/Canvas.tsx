@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect } from 'react';
 import { Canvas as FabricCanvas, Circle, Group, Line, Rect, Shadow, Textbox, Triangle } from 'fabric';
 import CanvasToolbar from './CanvasToolbar';
@@ -385,6 +384,10 @@ const Canvas: React.FC = () => {
     setActiveTool('');
   };
 
+  const onShowEficientisIntegration = () => {
+    // Implement integration logic here
+  };
+
   return (
     <TooltipProvider>
       <div className="relative h-full w-full">
@@ -400,6 +403,7 @@ const Canvas: React.FC = () => {
           showShapesOptions={showShapesOptions}
           setShowShapesOptions={setShowShapesOptions}
           onStickyColorSelect={handleStickyColorSelect}
+          onShowEficientisIntegration={onShowEficientisIntegration}
         />
         
         <div className="fixed bottom-6 right-6 flex flex-col space-y-2">

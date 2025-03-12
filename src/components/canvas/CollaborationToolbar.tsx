@@ -16,7 +16,8 @@ import {
   LayoutTemplate,
   Menu,
   Search,
-  X
+  X,
+  Eye
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import UserAvatar from '@/components/UserAvatar';
@@ -37,6 +38,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import {
   Sheet,
@@ -227,13 +229,13 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
                 variant="outline" 
                 size="icon" 
                 className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white transition-colors"
-                onClick={onShowTemplates}
+                onClick={toggleAuthors}
               >
-                <LayoutTemplate className="h-5 w-5" />
+                {showAuthors ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>Plantillas</p>
+              <p>{showAuthors ? 'Ocultar autores' : 'Mostrar autores'}</p>
             </TooltipContent>
           </Tooltip>
           
@@ -244,7 +246,7 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
                 className="bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white text-black gap-1 transition-colors"
                 onClick={onShowSharing}
               >
-                <Share2 className="h-4 w-4" />
+                <Share2 className="h-4 w-4 mr-1" />
                 <span>Compartir</span>
               </Button>
             </TooltipTrigger>
@@ -303,25 +305,23 @@ const CollaborationToolbar: React.FC<CollaborationToolbarProps> = ({
             </div>
           )}
 
-          {/* Timer Finished Dialog */}
-          {showTimerFinishedDialog && (
-            <Dialog open={showTimerFinishedDialog} onOpenChange={setShowTimerFinishedDialog}>
-              <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle>¡Tiempo finalizado!</DialogTitle>
-                  <DialogDescription>
-                    El temporizador ha finalizado.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="flex justify-end gap-2 mt-4">
-                  <DialogClose asChild>
-                    <Button variant="outline">Cerrar</Button>
-                  </DialogClose>
-                  <Button onClick={handleStartTimer}>Reiniciar</Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-          )}
+          {/* Timer Finished Dialog - Center of screen */}
+          <Dialog open={showTimerFinishedDialog} onOpenChange={setShowTimerFinishedDialog}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>¡Tiempo finalizado!</DialogTitle>
+                <DialogDescription>
+                  El temporizador ha finalizado.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="flex justify-end gap-2 mt-4">
+                <DialogClose asChild>
+                  <Button variant="outline">Cerrar</Button>
+                </DialogClose>
+                <Button onClick={handleStartTimer}>Reiniciar</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
 
           {/* Collaborators Panel */}
           {showCollaborators && (
