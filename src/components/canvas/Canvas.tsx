@@ -96,15 +96,15 @@ const Canvas: React.FC = () => {
         const activeObject = fabricCanvas.getActiveObject();
   
         if (activeObject) {
-          if (activeObject.type === "activeSelection") {
-            // 🔥 Convertimos el activeObject a ActiveSelection para acceder a getObjects()
-            const selection = activeObject as fabric.ActiveSelection;
-            selection.getObjects().forEach((obj) => fabricCanvas.remove(obj));
-          } else {
-            // 🔥 Si solo hay un objeto, lo eliminamos directamente
-            fabricCanvas.remove(activeObject);
+          if ("getObjects" in activeObject) {
+            const objects = (activeObject as fabric.ActiveSelection).getObjects();
+            objects.forEach((obj) => fabricCanvas.remove(obj));
           }
   
+          // 🔥 Eliminar el propio objeto (ya sea individual o la selección completa)
+          fabricCanvas.remove(activeObject);
+  
+          // 🔥 Limpiar la selección y actualizar el lienzo
           fabricCanvas.discardActiveObject();
           fabricCanvas.renderAll();
         }
