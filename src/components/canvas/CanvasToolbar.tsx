@@ -47,6 +47,14 @@ const CanvasToolbar: React.FC<ToolbarProps> = ({
     
     // Reset all option menus
     setShowPenOptions(tool === 'marker' && !showPenOptions);
+
+    // Asegurar que se muestra el menú de opciones para el pen
+    if (tool === "marker" || tool === "pen") {
+      setShowPenOptions(true);
+    } else {
+      setShowPenOptions(false);
+    }
+    
     setShowStickyOptions(tool === 'sticky' && !showStickyOptions);
     setShowShapesOptions(tool === 'shapes' && !showShapesOptions);
   };

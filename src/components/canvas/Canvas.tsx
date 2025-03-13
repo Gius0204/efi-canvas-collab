@@ -1,6 +1,7 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { Canvas as FabricCanvas, Circle, Group, Line, Rect, Shadow, Textbox, Triangle } from 'fabric';
+import * as fabric from "fabric";
 import CanvasToolbar from './CanvasToolbar';
 import { Minus, Plus } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -95,13 +96,19 @@ const Canvas: React.FC = () => {
       case 'pen':
       case 'marker':
         fabricCanvas.isDrawingMode = true;
+        fabricCanvas.freeDrawingBrush = new fabric.PencilBrush(fabricCanvas);
         fabricCanvas.freeDrawingBrush.width = activeTool === 'marker' ? 4 : 2;
         fabricCanvas.freeDrawingBrush.color = '#000000';
         break;
       case 'eraser':
-        fabricCanvas.isDrawingMode = true;
-        fabricCanvas.freeDrawingBrush.width = 10;
-        fabricCanvas.freeDrawingBrush.color = fabricCanvas.backgroundColor as string;
+        fabricCanvas.isDrawingMode = false;
+        fabricCanvas.on("mouse:down", (event) => {
+          const target = event.target;
+          if (target) {
+            fabricCanvas.remove(target);
+            fabricCanvas.renderAll();
+          }
+        });
         break;
       case 'sticky':
         // Do nothing - now handled by the sticky color selection
@@ -127,6 +134,8 @@ const Canvas: React.FC = () => {
       case 'template':
         handleShowTemplates();
         break;
+      default:
+        fabricCanvas.isDrawingMode = false;
     }
   }, [activeTool, fabricCanvas]);
 
