@@ -116,9 +116,18 @@ const Canvas: React.FC = () => {
 
     switch (activeTool) {
       case 'pen':
+        fabricCanvas.isDrawingMode = true;
+        if (!fabricCanvas.freeDrawingBrush) {
+          fabricCanvas.freeDrawingBrush = new fabric.PencilBrush(fabricCanvas);
+        }
+        fabricCanvas.freeDrawingBrush.width = activeTool === 'marker' ? 4 : 2;
+        fabricCanvas.freeDrawingBrush.color = penColor;
+        break;
       case 'marker':
         fabricCanvas.isDrawingMode = true;
-        fabricCanvas.freeDrawingBrush = new fabric.PencilBrush(fabricCanvas);
+        if (!fabricCanvas.freeDrawingBrush) {
+          fabricCanvas.freeDrawingBrush = new fabric.PencilBrush(fabricCanvas);
+        }
         fabricCanvas.freeDrawingBrush.width = activeTool === 'marker' ? 4 : 2;
         fabricCanvas.freeDrawingBrush.color = penColor;
         break;
