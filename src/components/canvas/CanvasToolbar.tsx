@@ -27,6 +27,8 @@ interface ToolbarProps {
   onStickyColorSelect: (color: string) => void;
   onShowEficientisIntegration: () => void;
   onShowTemplates: () => void;
+  penColor: string;
+  setPenColor: (color: string) => void;
 }
 
 const CanvasToolbar: React.FC<ToolbarProps> = ({
@@ -40,7 +42,9 @@ const CanvasToolbar: React.FC<ToolbarProps> = ({
   setShowShapesOptions,
   onStickyColorSelect,
   onShowEficientisIntegration,
-  onShowTemplates
+  onShowTemplates,
+  penColor,
+  setPenColor
 }) => {
   const handleToolClick = (tool: string) => {
     setActiveTool(tool);
@@ -54,7 +58,7 @@ const CanvasToolbar: React.FC<ToolbarProps> = ({
     } else {
       setShowPenOptions(false);
     }
-    
+
     setShowStickyOptions(tool === 'sticky' && !showStickyOptions);
     setShowShapesOptions(tool === 'shapes' && !showShapesOptions);
   };
@@ -120,7 +124,7 @@ const CanvasToolbar: React.FC<ToolbarProps> = ({
                 <div className="flex space-x-2">
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <button className="w-6 h-6 rounded-full bg-black" onClick={() => setActiveTool('pen')}></button>
+                      <button className="w-6 h-6 rounded-full bg-black" onClick={() => setPenColor("#000000")}></button>
                     </TooltipTrigger>
                     <TooltipContent side="top">
                       <p>Negro</p>
@@ -128,7 +132,7 @@ const CanvasToolbar: React.FC<ToolbarProps> = ({
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <button className="w-6 h-6 rounded-full bg-red-500" onClick={() => setActiveTool('pen')}></button>
+                      <button className="w-6 h-6 rounded-full bg-red-500" onClick={() => setPenColor("#FF0000")}></button>
                     </TooltipTrigger>
                     <TooltipContent side="top">
                       <p>Rojo</p>
@@ -136,7 +140,7 @@ const CanvasToolbar: React.FC<ToolbarProps> = ({
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <button className="w-6 h-6 rounded-full bg-blue-500" onClick={() => setActiveTool('pen')}></button>
+                      <button className="w-6 h-6 rounded-full bg-blue-500" onClick={() => setPenColor("#4285F4")}></button>
                     </TooltipTrigger>
                     <TooltipContent side="top">
                       <p>Azul</p>
@@ -144,7 +148,7 @@ const CanvasToolbar: React.FC<ToolbarProps> = ({
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <button className="w-6 h-6 rounded-full bg-green-500" onClick={() => setActiveTool('pen')}></button>
+                      <button className="w-6 h-6 rounded-full bg-green-500" onClick={() => setPenColor("#34A853")}></button>
                     </TooltipTrigger>
                     <TooltipContent side="top">
                       <p>Verde</p>

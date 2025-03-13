@@ -16,6 +16,7 @@ const Canvas: React.FC = () => {
   const [showStickyOptions, setShowStickyOptions] = useState(false);
   const [showShapesOptions, setShowShapesOptions] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [penColor, setPenColor] = useState("#000000");
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -89,6 +90,27 @@ const Canvas: React.FC = () => {
 
   useEffect(() => {
     if (!fabricCanvas) return;
+  
+    const handleDelete = (event: KeyboardEvent) => {
+      if (event.key === "Delete" || event.key === "Backspace") {
+        const activeObject = fabricCanvas.getActiveObject();
+        if (activeObject) {
+          fabricCanvas.remove(activeObject);
+          fabricCanvas.discardActiveObject(); // Deseleccionar después de borrar
+          fabricCanvas.renderAll();
+        }
+      }
+    };
+  
+    document.addEventListener("keydown", handleDelete);
+  
+    return () => {
+      document.removeEventListener("keydown", handleDelete);
+    };
+  }, [fabricCanvas]);
+
+  useEffect(() => {
+    if (!fabricCanvas) return;
 
     fabricCanvas.isDrawingMode = false;
 
@@ -98,7 +120,7 @@ const Canvas: React.FC = () => {
         fabricCanvas.isDrawingMode = true;
         fabricCanvas.freeDrawingBrush = new fabric.PencilBrush(fabricCanvas);
         fabricCanvas.freeDrawingBrush.width = activeTool === 'marker' ? 4 : 2;
-        fabricCanvas.freeDrawingBrush.color = '#000000';
+        fabricCanvas.freeDrawingBrush.color = penColor;
         break;
       case 'eraser':
         // fabricCanvas.isDrawingMode = true;
@@ -422,6 +444,8 @@ const Canvas: React.FC = () => {
           onStickyColorSelect={handleStickyColorSelect}
           onShowEficientisIntegration={onShowEficientisIntegration}
           onShowTemplates={handleShowTemplates}
+          penColor={penColor} // Pasamos el color actual del lápiz
+          setPenColor={setPenColor} // Pasamos la función para cambiar el color
         />
         
         <div className="fixed bottom-6 right-6 flex flex-col space-y-2">
