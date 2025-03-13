@@ -115,25 +115,6 @@ const Canvas: React.FC = () => {
     fabricCanvas.isDrawingMode = false;
 
     switch (activeTool) {
-      case 'pen':
-        fabricCanvas.isDrawingMode = true;
-        if (!fabricCanvas.freeDrawingBrush) {
-          fabricCanvas.freeDrawingBrush = new fabric.PencilBrush(fabricCanvas);
-        }
-        fabricCanvas.freeDrawingBrush.width = activeTool === 'pen' ? 4 : 2;
-        fabricCanvas.freeDrawingBrush.color = penColor;
-        break;
-      case 'marker':
-        fabricCanvas.isDrawingMode = true;
-        if (!fabricCanvas.freeDrawingBrush) {
-          fabricCanvas.freeDrawingBrush = new fabric.PencilBrush(fabricCanvas);
-        }
-        fabricCanvas.freeDrawingBrush.width = activeTool === 'marker' ? 4 : 2;
-        fabricCanvas.freeDrawingBrush.color = penColor;
-        break;
-      case 'eraser':
-        // fabricCanvas.isDrawingMode = true;
-        break;
       case 'sticky':
         // Do nothing - now handled by the sticky color selection
         break;
@@ -162,6 +143,29 @@ const Canvas: React.FC = () => {
         fabricCanvas.isDrawingMode = false;
     }
   }, [activeTool, fabricCanvas]);
+
+  useEffect(() => {
+    if (!fabricCanvas) return;
+  
+    fabricCanvas.isDrawingMode = false;
+  
+    switch (activeTool) {
+      case "pen":
+      case "marker":
+        fabricCanvas.isDrawingMode = true;
+        
+        if (!fabricCanvas.freeDrawingBrush) {
+          fabricCanvas.freeDrawingBrush = new fabric.PencilBrush(fabricCanvas);
+        }
+        
+        fabricCanvas.freeDrawingBrush.color = penColor; // 🔥 Aseguramos que el color cambia
+        fabricCanvas.freeDrawingBrush.width = activeTool === "marker" ? 4 : 2;
+        break;
+        
+      default:
+        fabricCanvas.isDrawingMode = false;
+    }
+  }, [activeTool, fabricCanvas, penColor]); // 👈 Se ejecuta cuand
 
   const addStickyNote = (color: string) => {
     if (!fabricCanvas) return;
