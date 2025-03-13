@@ -94,9 +94,18 @@ const Canvas: React.FC = () => {
     const handleDelete = (event: KeyboardEvent) => {
       if (event.key === "Delete" || event.key === "Backspace") {
         const activeObject = fabricCanvas.getActiveObject();
+  
         if (activeObject) {
-          fabricCanvas.remove(activeObject);
-          fabricCanvas.discardActiveObject(); // Deseleccionar después de borrar
+          if (activeObject.type === "activeSelection") {
+            // 🔥 Convertimos el activeObject a ActiveSelection para acceder a getObjects()
+            const selection = activeObject as fabric.ActiveSelection;
+            selection.getObjects().forEach((obj) => fabricCanvas.remove(obj));
+          } else {
+            // 🔥 Si solo hay un objeto, lo eliminamos directamente
+            fabricCanvas.remove(activeObject);
+          }
+  
+          fabricCanvas.discardActiveObject();
           fabricCanvas.renderAll();
         }
       }
