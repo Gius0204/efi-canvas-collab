@@ -92,8 +92,12 @@ const Canvas: React.FC = () => {
 
     fabricCanvas.isDrawingMode = false;
 
+    // Primero, eliminamos cualquier evento anterior para evitar problemas
+    fabricCanvas.off("mouse:down");
+
     switch (activeTool) {
       case 'pen':
+        break;
       case 'marker':
         fabricCanvas.isDrawingMode = true;
         fabricCanvas.freeDrawingBrush = new fabric.PencilBrush(fabricCanvas);
