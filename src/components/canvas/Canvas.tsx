@@ -94,7 +94,6 @@ const Canvas: React.FC = () => {
 
     switch (activeTool) {
       case 'pen':
-        break;
       case 'marker':
         fabricCanvas.isDrawingMode = true;
         fabricCanvas.freeDrawingBrush = new fabric.PencilBrush(fabricCanvas);
@@ -102,7 +101,7 @@ const Canvas: React.FC = () => {
         fabricCanvas.freeDrawingBrush.color = '#000000';
         break;
       case 'eraser':
-        fabricCanvas.isDrawingMode = false;
+        // fabricCanvas.isDrawingMode = true;
         break;
       case 'sticky':
         // Do nothing - now handled by the sticky color selection
@@ -131,31 +130,7 @@ const Canvas: React.FC = () => {
       default:
         fabricCanvas.isDrawingMode = false;
     }
-
-      // Función para manejar la eliminación con la tecla "Delete"
-    const handleDelete = (event: KeyboardEvent) => {
-      if (event.key === "Delete" || event.key === "Backspace") {
-        const activeObject = fabricCanvas.getActiveObject();
-        if (activeObject) {
-          fabricCanvas.remove(activeObject);
-          fabricCanvas.discardActiveObject(); // Deseleccionar después de borrar
-          fabricCanvas.renderAll();
-        }
-      }
-    };
-
-    // Agregamos el listener solo cuando el usuario selecciona "eraser"
-    if (activeTool === "eraser") {
-      document.addEventListener("keydown", handleDelete);
-    }
-
-    // Cleanup: eliminamos el listener cuando se cambia de herramienta
-    return () => {
-      document.removeEventListener("keydown", handleDelete);
-    };
   }, [activeTool, fabricCanvas]);
-  
-  
 
   const addStickyNote = (color: string) => {
     if (!fabricCanvas) return;
