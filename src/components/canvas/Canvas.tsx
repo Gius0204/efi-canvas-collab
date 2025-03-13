@@ -120,7 +120,7 @@ const Canvas: React.FC = () => {
         if (!fabricCanvas.freeDrawingBrush) {
           fabricCanvas.freeDrawingBrush = new fabric.PencilBrush(fabricCanvas);
         }
-        fabricCanvas.freeDrawingBrush.width = activeTool === 'marker' ? 4 : 2;
+        fabricCanvas.freeDrawingBrush.width = activeTool === 'pen' ? 4 : 2;
         fabricCanvas.freeDrawingBrush.color = penColor;
         break;
       case 'marker':
