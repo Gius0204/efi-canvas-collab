@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,6 +18,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/canvas/:id" element={<CanvasPage />} />
+          {/* Asegúrate de tener una ruta que capture la plantilla */}
+          <Route path="/canvas/template/:id" element={<CanvasPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
