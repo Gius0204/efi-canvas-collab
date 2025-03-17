@@ -255,11 +255,8 @@ const CreateCanvasModal: React.FC<CreateCanvasModalProps> = ({ isOpen, onClose }
                           <div className="p-2">
                             <h5 className="font-medium text-xs">{template.name}</h5>
                             <div className="flex justify-between mt-2">
-                              <button className="bg-primary text-white text-xs px-2 py-0.5 rounded">
+                              <button className="bg-primary text-white text-xs px-2 py-0.5 rounded border">
                                 Crear
-                              </button>
-                              <button className="text-gray-600 text-xs px-2 py-0.5 rounded border">
-                                Usar
                               </button>
                               <button className="text-gray-600 p-0.5 rounded border">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
