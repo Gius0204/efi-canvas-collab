@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import CanvasHeader from '@/components/canvas/CanvasHeader';
@@ -12,9 +11,8 @@ import AIGeneratorPanel from '@/components/canvas/AIGeneratorPanel';
 import CommentsPanel from '@/components/canvas/CommentsPanel';
 import SharePanel from '@/components/canvas/SharePanel';
 import EficientisIntegrationPanel from '@/components/canvas/EficientisIntegrationPanel';
-import TemplatePanel from '@/components/canvas/TemplatePanel';
 import { toast } from 'sonner';
-import { StatisticItem } from '@/types/statistics';
+import { StatisticItem } from '@/components/canvas/StatisticsPanel';
 
 interface VoteItem {
   id: string;
@@ -46,8 +44,15 @@ const CanvasPage = () => {
   const [showComments, setShowComments] = useState(false);
   const [showSharing, setShowSharing] = useState(false);
   const [showEficientisIntegration, setShowEficientisIntegration] = useState(false);
-  const [showTemplatePanel, setShowTemplatePanel] = useState(false);
   const [isVotingOwner, setIsVotingOwner] = useState(false);
+  // const [activeTool, setActiveTool] = useState('');
+  // const [showPenOptions, setShowPenOptions] = useState(false);
+  // const [showStickyOptions, setShowStickyOptions] = useState(false);
+  // const [showShapesOptions, setShowShapesOptions] = useState(false);
+  
+  // const handleStickyColorSelect = (color: string) => {
+  //   toast.success(`Color seleccionado: ${color}`);
+  // };
   
   const mockVoteItems: VoteItem[] = [
     { id: '1', content: 'Incremento en costos de materias primas', votes: 0, color: 'bg-red-200' },
@@ -223,6 +228,14 @@ const CanvasPage = () => {
     };
     
     loadCanvas();
+    
+    // const votingNotificationTimer = setTimeout(() => {
+    //   setShowVotingNotification(true);
+    // }, 5000);
+    
+    // return () => {
+    //   clearTimeout(votingNotificationTimer);
+    // };
   }, [id]);
   
   const handleJoinVoting = () => {
@@ -338,14 +351,6 @@ const CanvasPage = () => {
     toast.success(`Comentario ${id} resuelto`);
   };
 
-  const handleShowTemplatePanel = () => {
-    setShowTemplatePanel(true);
-  };
-
-  const handleCloseTemplatePanel = () => {
-    setShowTemplatePanel(false);
-  };
-
   if (isLoading) {
     return (
       <div className="flex flex-col h-screen">
@@ -370,6 +375,19 @@ const CanvasPage = () => {
           onShowEficientisIntegration={handleShowEficientisIntegration}
           onStartVoting={() => setShowVotingNotification(true)}
         />
+        
+        {/* <CanvasToolbar
+          activeTool={activeTool}
+          setActiveTool={setActiveTool}
+          showPenOptions={showPenOptions}
+          setShowPenOptions={setShowPenOptions}
+          showStickyOptions={showStickyOptions}
+          setShowStickyOptions={setShowStickyOptions}
+          showShapesOptions={showShapesOptions}
+          setShowShapesOptions={setShowShapesOptions}
+          onStickyColorSelect={handleStickyColorSelect}
+          onShowEficientisIntegration={handleShowEficientisIntegration}
+        /> */}
         
         {showVotingNotification && (
           <VotingNotification 
@@ -446,15 +464,11 @@ const CanvasPage = () => {
           />
         )}
 
-        {showTemplatePanel && (
-          <TemplatePanel
-            onClose={handleCloseTemplatePanel}
-            isCanvasActive={true}
-          />
-        )}
+        
       </div>
     </div>
   );
 };
 
 export default CanvasPage;
+
