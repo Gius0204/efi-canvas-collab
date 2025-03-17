@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 
-interface StatisticItem {
+export interface StatisticItem {
   id: string;
   content: string;
   percentage: number;

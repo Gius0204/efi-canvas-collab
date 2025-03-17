@@ -14,6 +14,7 @@ const TemplatePanel: React.FC<TemplatePanelProps> = ({ onClose }) => {
   const [showTemplates, setShowTemplates] = useState(true);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState('estrategia');
 
   const templateCategories = [
     { id: 'brainstorming', name: 'Brainstorming' },
@@ -28,14 +29,14 @@ const TemplatePanel: React.FC<TemplatePanelProps> = ({ onClose }) => {
 
   const templates = [
     { id: 'foda', name: 'BSC FODA', category: 'estrategia', thumbnail: '/lovable-uploads/4c97b60b-269d-4520-94f2-79ba47293d04.png' },
-    { id: 'okrs', name: 'OKRs', category: 'gestion', thumbnail: '/lovable-uploads/26b3a7d4-8e3d-4e4d-9d23-c7c6a050981d.png' },
+    { id: 'okrs', name: 'OKRs', category: 'estrategia', thumbnail: '/lovable-uploads/26b3a7d4-8e3d-4e4d-9d23-c7c6a050981d.png' },
     { id: 'pestel', name: 'PESTEL', category: 'estrategia', thumbnail: '/lovable-uploads/40097394-44a8-4e3b-a650-4dff0315f093.png' },
     { id: 'mapa', name: 'MAPA ESTRATÉGICO', category: 'estrategia', thumbnail: '/lovable-uploads/e6a590cd-abad-475c-9560-946cd7364af8.png' },
   ];
 
   const widgets = [
-    { id: 'foda-widget', name: 'Widget FODA', category: 'widgets', thumbnail: '/lovable-uploads/4c97b60b-269d-4520-94f2-79ba47293d04.png' },
-    { id: 'okrs-widget', name: 'Widget OKRs', category: 'widgets', thumbnail: '/lovable-uploads/26b3a7d4-8e3d-4e4d-9d23-c7c6a050981d.png' },
+    { id: 'foda-widget', name: 'Widget FODA', category: 'widgets', thumbnail: '/lovable-uploads/8bf3774b-aec4-40f1-b295-a28fbd9062e6.png' },
+    { id: 'okrs-widget', name: 'Widget OKRs', category: 'widgets', thumbnail: '/lovable-uploads/f8d90d40-5409-4bde-a4cf-db2e296f7adb.png' },
   ];
 
   const handleBackToOptions = () => {
@@ -45,6 +46,11 @@ const TemplatePanel: React.FC<TemplatePanelProps> = ({ onClose }) => {
 
   const handleTemplateClick = (templateId: string) => {
     setSelectedTemplate(templateId);
+  };
+
+  const handleCategoryClick = (categoryId: string) => {
+    setActiveCategory(categoryId);
+    setSelectedTemplate(null);
   };
 
   const handleCreateWithTemplate = (templateId: string) => {
@@ -67,12 +73,15 @@ const TemplatePanel: React.FC<TemplatePanelProps> = ({ onClose }) => {
     : null;
 
   const filteredTemplates = [...templates, ...widgets].filter(t => 
-    t.id !== selectedTemplate && 
-    (!selectedTemplate || t.category === selectedTemplateData?.category)
+    (!searchQuery || t.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
+    (t.id !== selectedTemplate) && 
+    (!selectedTemplate ? (t.category === activeCategory) : (t.category === selectedTemplateData?.category))
   );
 
+  const displayedItems = activeCategory === 'widgets' ? widgets : templates.filter(t => t.category === activeCategory);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-auto">
         <div className="relative p-4">
           <button 
@@ -93,7 +102,10 @@ const TemplatePanel: React.FC<TemplatePanelProps> = ({ onClose }) => {
                   <ul className="space-y-2">
                     {templateCategories.map(category => (
                       <li key={category.id}>
-                        <button className="w-full text-left px-2 py-1 rounded hover:bg-gray-100 text-sm">
+                        <button 
+                          className={`w-full text-left px-2 py-1 rounded hover:bg-gray-100 text-sm ${activeCategory === category.id ? 'bg-gray-100 font-medium' : ''}`}
+                          onClick={() => handleCategoryClick(category.id)}
+                        >
                           {category.name}
                         </button>
                       </li>
@@ -114,73 +126,33 @@ const TemplatePanel: React.FC<TemplatePanelProps> = ({ onClose }) => {
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
-                    {templates.map(template => (
-                      <div key={template.id} className="border rounded-md overflow-hidden">
+                    {displayedItems.map(item => (
+                      <div key={item.id} className="border rounded-md overflow-hidden">
                         <div className="h-36 bg-gray-100">
                           <img 
-                            src={template.thumbnail} 
-                            alt={template.name}
+                            src={item.thumbnail} 
+                            alt={item.name}
                             className="w-full h-full object-cover"
                           />
                         </div>
                         <div className="p-3 flex flex-col">
-                          <h3 className="font-medium text-sm mb-2">{template.name}</h3>
+                          <h3 className="font-medium text-sm mb-2">{item.name}</h3>
                           <div className="flex justify-between">
                             <Button 
-                              onClick={() => handleCreateWithTemplate(template.id)}
+                              onClick={() => handleCreateWithTemplate(item.id)}
                               className="bg-primary text-white text-xs px-3 py-1 rounded hover:bg-primary/90"
                             >
                               Crear
                             </Button>
                             <div className="flex space-x-1">
                               <Button 
-                                onClick={() => handleUseTemplate(template.id)}
+                                onClick={() => handleUseTemplate(item.id)}
                                 className="text-gray-600 hover:text-gray-900 text-xs px-3 py-1 rounded border bg-white"
                               >
                                 Usar
                               </Button>
                               <Button 
-                                onClick={() => handleViewTemplate(template.id)}
-                                className="text-gray-600 hover:text-gray-900 p-1 rounded border bg-white"
-                              >
-                                <Eye className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <h3 className="font-medium text-md my-4">Widgets</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    {widgets.map(widget => (
-                      <div key={widget.id} className="border rounded-md overflow-hidden">
-                        <div className="h-36 bg-gray-100">
-                          <img 
-                            src={widget.thumbnail} 
-                            alt={widget.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="p-3 flex flex-col">
-                          <h3 className="font-medium text-sm mb-2">{widget.name}</h3>
-                          <div className="flex justify-between">
-                            <Button 
-                              onClick={() => handleCreateWithTemplate(widget.id)}
-                              className="bg-primary text-white text-xs px-3 py-1 rounded hover:bg-primary/90"
-                            >
-                              Crear
-                            </Button>
-                            <div className="flex space-x-1">
-                              <Button 
-                                onClick={() => handleUseTemplate(widget.id)}
-                                className="text-gray-600 hover:text-gray-900 text-xs px-3 py-1 rounded border bg-white"
-                              >
-                                Usar
-                              </Button>
-                              <Button 
-                                onClick={() => handleViewTemplate(widget.id)}
+                                onClick={() => handleViewTemplate(item.id)}
                                 className="text-gray-600 hover:text-gray-900 p-1 rounded border bg-white"
                               >
                                 <Eye className="w-4 h-4" />
