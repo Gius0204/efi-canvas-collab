@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Plus } from 'lucide-react';
+import FodaWidgetComponent from './FodaWidgetComponent';
 
 interface PerspectiveProps {
   name: string;
@@ -11,12 +12,14 @@ interface PerspectiveProps {
 interface FodaWidgetProps {
   title?: string;
   onClose?: () => void;
+  onAddToCanvas?: (data: any) => void;
   isPreview?: boolean;
 }
 
 const FodaWidget: React.FC<FodaWidgetProps> = ({ 
   title = "New Doc Eficientis - Widget FODA",
   onClose,
+  onAddToCanvas,
   isPreview = false
 }) => {
   const [perspectives, setPerspectives] = useState([

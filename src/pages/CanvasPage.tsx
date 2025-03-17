@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import CanvasHeader from '@/components/canvas/CanvasHeader';
@@ -13,14 +14,7 @@ import SharePanel from '@/components/canvas/SharePanel';
 import EficientisIntegrationPanel from '@/components/canvas/EficientisIntegrationPanel';
 import TemplatePanel from '@/components/canvas/TemplatePanel';
 import { toast } from 'sonner';
-
-export interface StatisticItem {
-  id: string;
-  content: string;
-  percentage: number;
-  category: string;
-  color: string;
-}
+import { StatisticItem } from '@/types/statistics';
 
 interface VoteItem {
   id: string;
@@ -365,7 +359,7 @@ const CanvasPage = () => {
   
   return (
     <div className="flex flex-col h-screen">
-      <CanvasHeader title={title} onShowTemplates={handleShowTemplatePanel} />
+      <CanvasHeader title={title} />
       <div className="flex-1 overflow-hidden relative">
         <Canvas />
         <CollaborationToolbar 
@@ -374,7 +368,6 @@ const CanvasPage = () => {
           onShowComments={handleShowComments}
           onShowSharing={handleShowSharing}
           onShowEficientisIntegration={handleShowEficientisIntegration}
-          onShowTemplates={handleShowTemplatePanel}
           onStartVoting={() => setShowVotingNotification(true)}
         />
         

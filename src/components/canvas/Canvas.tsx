@@ -1,13 +1,13 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Canvas as FabricCanvas, Rect, Textbox, Group, TEvent, Shadow } from 'fabric';
+import { Canvas as FabricCanvas, Rect, Textbox, Group, Shadow } from 'fabric';
 import { createFodaTemplate } from './templates/FodaTemplate';
 import { createOkrsTemplate } from './templates/OkrsTemplate';
 import { createPestelTemplate } from './templates/PestelTemplate';
 import { createBscMapTemplate } from './templates/BscMapTemplate';
 import { useParams } from 'react-router-dom';
-import FodaWidget from './widgets/FodaWidget';
-import OkrWidget from './widgets/OkrWidget';
+import FodaWidgetComponent from './widgets/FodaWidgetComponent';
+import OkrsWidgetComponent from './widgets/OkrsWidgetComponent';
 import { toast } from 'sonner';
 
 const Canvas: React.FC = () => {
@@ -43,17 +43,21 @@ const Canvas: React.FC = () => {
     window.addEventListener('resize', handleResize);
     
     // Set up text editing on double click
-    canvas.on('mouse:dblclick', (options: TEvent) => {
-      if (!options.target) return;
+    canvas.on('mouse:dblclick', (options) => {
+      if (!options.e) return; // Check if the event object exists
       
-      if (options.target.type === 'textbox') {
+      // Get the target from the event's target property instead
+      const target = canvas.findTarget(options.e);
+      if (!target) return;
+      
+      if (target.type === 'textbox') {
         // It's already a textbox, just enable editing
-        const textbox = options.target as Textbox;
+        const textbox = target as Textbox;
         textbox.enterEditing();
         textbox.selectAll();
-      } else if (options.target.type === 'group') {
+      } else if (target.type === 'group') {
         // Find any textbox within the group and enable editing
-        const group = options.target as Group;
+        const group = target as Group;
         const textbox = group.getObjects().find(obj => obj.type === 'textbox') as Textbox | undefined;
         
         if (textbox) {
@@ -407,14 +411,14 @@ const Canvas: React.FC = () => {
       <canvas ref={canvasRef} className="absolute inset-0" />
       
       {showFodaWidget && (
-        <FodaWidget 
+        <FodaWidgetComponent 
           onClose={() => setShowFodaWidget(false)}
           onAddToCanvas={handleCreateFodaWidget}
         />
       )}
       
       {showOkrWidget && (
-        <OkrWidget
+        <OkrsWidgetComponent
           onClose={() => setShowOkrWidget(false)} 
           onAddToCanvas={handleCreateOkrWidget}
         />

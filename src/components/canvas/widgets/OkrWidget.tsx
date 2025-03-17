@@ -11,12 +11,14 @@ interface OkrItem {
 interface OkrWidgetProps {
   title?: string;
   onClose?: () => void;
+  onAddToCanvas?: (data: any) => void;
   isPreview?: boolean;
 }
 
 const OkrWidget: React.FC<OkrWidgetProps> = ({ 
   title = "New Doc Eficientis - Widget OKRs",
   onClose,
+  onAddToCanvas,
   isPreview = false
 }) => {
   const [items, setItems] = useState<OkrItem[]>([
