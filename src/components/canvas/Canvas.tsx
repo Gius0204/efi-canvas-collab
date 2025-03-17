@@ -6,6 +6,8 @@ import CanvasToolbar from './CanvasToolbar';
 import { Minus, Plus } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import TemplatePanel from '@/components/canvas/TemplatePanel';
+import EficientisIntegrationPanel from '@/components/canvas/EficientisIntegrationPanel';
+import { toast } from 'sonner';
 
 const Canvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -17,6 +19,7 @@ const Canvas: React.FC = () => {
   const [showShapesOptions, setShowShapesOptions] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [penColor, setPenColor] = useState("#000000");
+  const [showEficientisIntegration, setShowEficientisIntegration] = useState(false);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -439,6 +442,7 @@ const Canvas: React.FC = () => {
   const onShowEficientisIntegration = () => {
     // Pass this function up to the parent component
     // This will be handled by CanvasPage.tsx
+    setShowEficientisIntegration(true);
   };
 
   const handleShowTemplates = () => {
@@ -447,6 +451,20 @@ const Canvas: React.FC = () => {
 
   const handleCloseTemplates = () => {
     setShowTemplates(false);
+  };
+
+  const handleCloseEficientisIntegration = () => {
+    setShowEficientisIntegration(false);
+  };
+
+  const handleImportFromEficientis = () => {
+    toast.success('Buscando e importando datos de Eficientis...');
+    handleCloseEficientisIntegration();
+  };
+
+  const handleCreateBoardForEficientis = () => {
+    toast.success('Creando nuevo board para Eficientis...');
+    handleCloseEficientisIntegration();
   };
 
   return (
@@ -500,6 +518,14 @@ const Canvas: React.FC = () => {
         {showTemplates && (
           <TemplatePanel
             onClose={handleCloseTemplates}
+          />
+        )}
+
+        {showEficientisIntegration && (
+          <EficientisIntegrationPanel
+            onClose={handleCloseEficientisIntegration}
+            onImport={handleImportFromEficientis}
+            onCreateBoard={handleCreateBoardForEficientis}
           />
         )}
       </div>
