@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Draggable from "react-draggable";
@@ -116,6 +116,29 @@ const FodaWidgetComponent: React.FC<FodaWidgetComponentProps> = ({
     }
   };
 
+  useEffect(() => {
+    const handleFodaDrop = (event: any) => {
+      const droppedText = event.detail;
+      if (droppedText && activeType) {
+        setItems((prevItems) => [
+          ...prevItems,
+          {
+            id: (prevItems.length + 1).toString(),
+            text: droppedText,
+            type: activeType,
+            perspective: activePerspective,
+          },
+        ]);
+      }
+    };
+
+    window.addEventListener("fodaDrop", handleFodaDrop);
+
+    return () => {
+      window.removeEventListener("fodaDrop", handleFodaDrop);
+    };
+  }, [activeType, activePerspective]);
+
   return (
     <Draggable>
       <div
@@ -143,7 +166,21 @@ const FodaWidgetComponent: React.FC<FodaWidgetComponentProps> = ({
                     >
                       <span
                         className="text-sm cursor-pointer"
-                        onClick={() => setActivePerspective(p)}
+                        onClick={() => setActivePerspective(p)} // Un clic selecciona la perspectiva
+                        onDoubleClick={(e) => {
+                          e.currentTarget.contentEditable = "true"; // Activa la edición en doble clic
+                          e.currentTarget.focus();
+                        }}
+                        onBlur={(e) => {
+                          e.currentTarget.contentEditable = "false"; // Desactiva la edición al perder el foco
+                          const newName = e.currentTarget.textContent?.trim();
+                          if (!newName) return; // Evita que el nombre quede vacío
+
+                          const updatedPerspectives = perspectives.map(
+                            (persp) => (persp === p ? newName : persp)
+                          );
+                          setPerspectives(updatedPerspectives);
+                        }}
                       >
                         {p}
                       </span>

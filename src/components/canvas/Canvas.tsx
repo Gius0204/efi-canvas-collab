@@ -170,6 +170,34 @@ const Canvas: React.FC = () => {
   useEffect(() => {
     if (!fabricCanvas) return;
 
+    const handleObjectModified = (event: fabric.ModifiedEvent) => {
+      const obj = event.target;
+      if (obj) {
+        if (obj instanceof fabric.Textbox) {
+          console.log("Texto movido:", obj.text);
+          handleDropOnWidgetFoda(obj.text);
+        } else if (obj instanceof fabric.Group) {
+          const textElement = obj
+            .getObjects()
+            .find((o) => o instanceof fabric.Textbox) as fabric.Textbox;
+          if (textElement) {
+            console.log("Sticky Note movido:", textElement.text);
+            handleDropOnWidgetFoda(textElement.text);
+          }
+        }
+      }
+    };
+
+    fabricCanvas.on("object:modified", handleObjectModified);
+
+    return () => {
+      fabricCanvas.off("object:modified", handleObjectModified);
+    };
+  }, [fabricCanvas]);
+
+  useEffect(() => {
+    if (!fabricCanvas) return;
+
     fabricCanvas.isDrawingMode = false;
 
     switch (activeTool) {
@@ -485,6 +513,12 @@ const Canvas: React.FC = () => {
     addStickyNote(color);
     setShowStickyOptions(false);
     setActiveTool("");
+  };
+
+  const handleDropOnWidgetFoda = (text: string) => {
+    console.log("Texto añadido al widget FODA:", text);
+    window.dispatchEvent(new CustomEvent("fodaDrop", { detail: text }));
+    // Aquí debes enviar el texto al widget FODA
   };
 
   const onShowEficientisIntegration = () => {
