@@ -8,6 +8,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import TemplatePanel from '@/components/canvas/TemplatePanel';
 import EficientisIntegrationPanel from '@/components/canvas/EficientisIntegrationPanel';
 import { toast } from 'sonner';
+import { useParams } from 'react-router-dom';
+import { createFodaTemplate } from './templates/FodaTemplate';
+import { createOkrsTemplate } from './templates/OkrsTemplate';
+import { createPestelTemplate } from './templates/PestelTemplate';
+import { createBscMapTemplate } from './templates/BscMapTemplate';
 
 const Canvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -20,6 +25,10 @@ const Canvas: React.FC = () => {
   const [showTemplates, setShowTemplates] = useState(false);
   const [penColor, setPenColor] = useState("#000000");
   const [showEficientisIntegration, setShowEficientisIntegration] = useState(false);
+  const { id } = useParams<{ id: string }>();
+  
+  // Get template type from URL if present
+  const templateType = id?.startsWith('template/') ? id.split('/')[1] : null;
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -90,6 +99,98 @@ const Canvas: React.FC = () => {
       }
     };
   }, []);
+
+  // Add template based on the template type from URL
+  useEffect(() => {
+    if (!fabricCanvas || !templateType) return;
+    
+    console.log('Loading template:', templateType);
+    
+    // Clear the canvas before adding the template
+    fabricCanvas.clear();
+    
+    // Add the grid back
+    const gridSize = 20;
+    for (let i = 0; i < fabricCanvas.width! / gridSize; i++) {
+      for (let j = 0; j < fabricCanvas.height! / gridSize; j++) {
+        if ((i + j) % 2 === 0) {
+          fabricCanvas.add(
+            new Circle({
+              left: i * gridSize,
+              top: j * gridSize,
+              radius: 1,
+              fill: '#e0e0e0',
+              selectable: false,
+              evented: false,
+            })
+          );
+        }
+      }
+    }
+    
+    // Add the appropriate template
+    switch (templateType) {
+      case 'foda':
+        createFodaTemplate(fabricCanvas);
+        toast.success('Plantilla FODA cargada correctamente');
+        break;
+      case 'okrs':
+        createOkrsTemplate(fabricCanvas);
+        toast.success('Plantilla OKRs cargada correctamente');
+        break;
+      case 'pestel':
+        createPestelTemplate(fabricCanvas);
+        toast.success('Plantilla PESTEL cargada correctamente');
+        break;
+      case 'mapa':
+        createBscMapTemplate(fabricCanvas);
+        toast.success('Plantilla MAPA ESTRATÉGICO cargada correctamente');
+        break;
+      default:
+        break;
+    }
+    
+    fabricCanvas.renderAll();
+    
+  }, [fabricCanvas, templateType]);
+
+  // Enable text editing on double click
+  useEffect(() => {
+    if (!fabricCanvas) return;
+    
+    const handleDblClick = (e: fabric.IEvent) => {
+      if (!e.target) return;
+      
+      const activeObject = e.target;
+      
+      // If the clicked object is a text object, make it editable
+      if (activeObject.type === 'textbox' || activeObject.type === 'i-text') {
+        (activeObject as fabric.Textbox).enterEditing();
+        fabricCanvas.renderAll();
+      }
+      
+      // If the object is a group, check if it contains a textbox
+      if (activeObject.type === 'group') {
+        const group = activeObject as fabric.Group;
+        const objects = group.getObjects();
+        
+        const textObject = objects.find(obj => 
+          obj.type === 'textbox' || obj.type === 'i-text'
+        ) as fabric.Textbox | undefined;
+        
+        if (textObject) {
+          textObject.enterEditing();
+          fabricCanvas.renderAll();
+        }
+      }
+    };
+    
+    fabricCanvas.on('mouse:dblclick', handleDblClick);
+    
+    return () => {
+      fabricCanvas.off('mouse:dblclick', handleDblClick);
+    };
+  }, [fabricCanvas]);
 
   useEffect(() => {
     if (!fabricCanvas) return;
