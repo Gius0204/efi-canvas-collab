@@ -1,13 +1,15 @@
 
 import React, { useState } from 'react';
-import { X, Plus, CircleDot, Zap, Flag } from 'lucide-react';
+import { X, Plus, Zap, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-interface OkrItem {
-  id: string;
-  text: string;
-  type: 'objetivo' | 'keyResult' | 'iniciativa';
-}
+import { 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle, 
+  CardDescription, 
+  CardFooter 
+} from '@/components/ui/card';
 
 interface OkrsWidgetComponentProps {
   onClose: () => void;
@@ -15,196 +17,193 @@ interface OkrsWidgetComponentProps {
 }
 
 const OkrsWidgetComponent: React.FC<OkrsWidgetComponentProps> = ({ onClose, onAddToCanvas }) => {
-  const [items, setItems] = useState<OkrItem[]>([
-    { id: '1', text: 'Optimizar la gestión financiera para mejorar la rentabilidad y sostenibilidad de la empresa.', type: 'objetivo' },
-    { id: '2', text: 'Reducir los costos operativos en un 15%', type: 'keyResult' },
-    { id: '3', text: 'Disminuir en un 30% los errores en reportes financieros', type: 'keyResult' },
-    { id: '4', text: 'Implementar un software de gestión financiera.', type: 'iniciativa' }
+  const [objective, setObjective] = useState('Optimizar la gestión financiera para mejorar la rentabilidad y sostenibilidad de la empresa.');
+  const [keyResults, setKeyResults] = useState([
+    'Reducir los costos operativos en un 15%',
+    'Disminuir en un 30% los errores en reportes financieros',
+    ''
+  ]);
+  const [initiatives, setInitiatives] = useState([
+    'Implementar un software de gestión financiera.',
+    ''
   ]);
   
-  const [newItem, setNewItem] = useState('');
-  const [activeType, setActiveType] = useState<'objetivo' | 'keyResult' | 'iniciativa' | null>(null);
+  const [isObjectiveEditing, setIsObjectiveEditing] = useState(false);
   
-  const handleAddItem = () => {
-    if (newItem && activeType) {
-      setItems([
-        ...items,
-        {
-          id: (items.length + 1).toString(),
-          text: newItem,
-          type: activeType
-        }
-      ]);
-      setNewItem('');
-      setActiveType(null);
-    }
+  const handleAddKeyResult = () => {
+    setKeyResults([...keyResults, '']);
   };
   
-  const handleRemoveItem = (id: string) => {
-    setItems(items.filter(item => item.id !== id));
+  const handleUpdateKeyResult = (index: number, value: string) => {
+    const newKeyResults = [...keyResults];
+    newKeyResults[index] = value;
+    setKeyResults(newKeyResults);
   };
-
-  const handleAddToCanvas = () => {
+  
+  const handleRemoveKeyResult = (index: number) => {
+    setKeyResults(keyResults.filter((_, i) => i !== index));
+  };
+  
+  const handleAddInitiative = () => {
+    setInitiatives([...initiatives, '']);
+  };
+  
+  const handleUpdateInitiative = (index: number, value: string) => {
+    const newInitiatives = [...initiatives];
+    newInitiatives[index] = value;
+    setInitiatives(newInitiatives);
+  };
+  
+  const handleRemoveInitiative = (index: number) => {
+    setInitiatives(initiatives.filter((_, i) => i !== index));
+  };
+  
+  const handleCreateWidget = () => {
+    // Filter out empty items
+    const filteredKeyResults = keyResults.filter(kr => kr.trim() !== '');
+    const filteredInitiatives = initiatives.filter(init => init.trim() !== '');
+    
     onAddToCanvas({
-      type: 'okrs-widget',
-      items
+      objective,
+      keyResults: filteredKeyResults,
+      initiatives: filteredInitiatives
     });
-    onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-auto">
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">OKRs Widget</h2>
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              <X className="h-5 w-5" />
-            </Button>
-          </div>
-          
-          <div className="mb-4">
-            <div className="bg-white p-4 border rounded-lg mb-4">
-              {/* Objective */}
-              <div className="mb-4">
-                <h3 className="text-md font-semibold mb-2 flex items-center">
-                  <CircleDot className="h-5 w-5 text-green-500 mr-2" /> Objetivo
-                </h3>
-                {items
-                  .filter(item => item.type === 'objetivo')
-                  .map(item => (
-                    <div key={item.id} className="bg-green-100 p-3 mb-2 rounded-md relative group">
-                      <button 
-                        onClick={() => handleRemoveItem(item.id)}
-                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                      <div
-                        className="w-full min-h-[40px]"
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={(e) => {
-                          setItems(items.map(i => i.id === item.id ? { ...i, text: e.currentTarget.textContent || '' } : i));
-                        }}
-                      >
-                        {item.text}
-                      </div>
-                    </div>
-                  ))}
-                  
-                <button 
-                  className="flex items-center p-2 bg-green-50 hover:bg-green-100 rounded-md text-sm"
-                  onClick={() => setActiveType('objetivo')}
+    <div className="p-6 max-h-[90vh] overflow-auto">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-bold">OKRs Widget</h2>
+        <Button variant="ghost" size="icon" onClick={onClose}>
+          <X className="h-5 w-5" />
+        </Button>
+      </div>
+      
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Objetivo</CardTitle>
+          <CardDescription>Defina el objetivo principal</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isObjectiveEditing ? (
+            <div className="flex flex-col space-y-2">
+              <textarea
+                className="w-full p-3 border rounded-md bg-blue-50"
+                rows={3}
+                value={objective}
+                onChange={(e) => setObjective(e.target.value)}
+                autoFocus
+              />
+              <div className="flex justify-end">
+                <Button 
+                  size="sm" 
+                  variant="default"
+                  onClick={() => setIsObjectiveEditing(false)}
                 >
-                  <Plus className="h-4 w-4 mr-1" /> Añadir Objetivo
-                </button>
-              </div>
-              
-              {/* Key Results */}
-              <div className="mb-4">
-                <h3 className="text-md font-semibold mb-2 flex items-center">
-                  <Zap className="h-5 w-5 text-blue-500 mr-2" /> Key Results
-                </h3>
-                {items
-                  .filter(item => item.type === 'keyResult')
-                  .map(item => (
-                    <div key={item.id} className="bg-blue-100 p-3 mb-2 rounded-md relative group">
-                      <button 
-                        onClick={() => handleRemoveItem(item.id)}
-                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                      <div
-                        className="w-full min-h-[40px]"
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={(e) => {
-                          setItems(items.map(i => i.id === item.id ? { ...i, text: e.currentTarget.textContent || '' } : i));
-                        }}
-                      >
-                        {item.text}
-                      </div>
-                    </div>
-                  ))}
-                  
-                <button 
-                  className="flex items-center p-2 bg-blue-50 hover:bg-blue-100 rounded-md text-sm"
-                  onClick={() => setActiveType('keyResult')}
-                >
-                  <Plus className="h-4 w-4 mr-1" /> Añadir Key Result
-                </button>
-              </div>
-              
-              {/* Initiatives */}
-              <div>
-                <h3 className="text-md font-semibold mb-2 flex items-center">
-                  <Flag className="h-5 w-5 text-yellow-500 mr-2" /> Iniciativas
-                </h3>
-                {items
-                  .filter(item => item.type === 'iniciativa')
-                  .map(item => (
-                    <div key={item.id} className="bg-yellow-100 p-3 mb-2 rounded-md relative group">
-                      <button 
-                        onClick={() => handleRemoveItem(item.id)}
-                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                      <div
-                        className="w-full min-h-[40px]"
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={(e) => {
-                          setItems(items.map(i => i.id === item.id ? { ...i, text: e.currentTarget.textContent || '' } : i));
-                        }}
-                      >
-                        {item.text}
-                      </div>
-                    </div>
-                  ))}
-                  
-                <button 
-                  className="flex items-center p-2 bg-yellow-50 hover:bg-yellow-100 rounded-md text-sm"
-                  onClick={() => setActiveType('iniciativa')}
-                >
-                  <Plus className="h-4 w-4 mr-1" /> Añadir Iniciativa
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          {activeType && (
-            <div className="mb-4 p-3 border rounded-md bg-gray-50">
-              <div className="mb-2 flex items-center justify-between">
-                <h3 className="text-md font-medium">
-                  Añadir {activeType === 'objetivo' ? 'Objetivo' : 
-                          activeType === 'keyResult' ? 'Key Result' : 'Iniciativa'}
-                </h3>
-                <Button variant="ghost" size="icon" onClick={() => setActiveType(null)}>
-                  <X className="h-4 w-4" />
+                  <Check className="mr-1 h-4 w-4" /> Guardar
                 </Button>
               </div>
-              <textarea
-                className="w-full border rounded-md p-2 resize-none"
-                rows={3}
-                placeholder="Escriba el texto aquí..."
-                value={newItem}
-                onChange={(e) => setNewItem(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleAddItem()}
-              />
-              <div className="flex justify-end mt-2">
-                <Button onClick={handleAddItem}>Añadir</Button>
+            </div>
+          ) : (
+            <div
+              className="flex items-center p-3 rounded-md bg-blue-50 hover:bg-blue-100 cursor-pointer"
+              onClick={() => setIsObjectiveEditing(true)}
+            >
+              <div className="flex-1">
+                <p className="font-medium">{objective}</p>
               </div>
             </div>
           )}
-          
-          <div className="flex justify-end space-x-2 mt-4">
-            <Button variant="outline" onClick={onClose}>Cancelar</Button>
-            <Button onClick={handleAddToCanvas}>Añadir al lienzo</Button>
-          </div>
+        </CardContent>
+      </Card>
+      
+      <div className="mb-8">
+        <h3 className="text-lg font-semibold mb-3">Key Results</h3>
+        <div className="space-y-2">
+          {keyResults.map((kr, index) => (
+            <div key={index} className="flex items-start space-x-2">
+              <div className="rounded-full bg-blue-100 p-2 mt-1">
+                <Zap className="h-4 w-4 text-blue-500" />
+              </div>
+              <div className="flex-1">
+                <textarea
+                  className="w-full p-2 border rounded-md resize-none"
+                  rows={2}
+                  placeholder="Añadir Key Result..."
+                  value={kr}
+                  onChange={(e) => handleUpdateKeyResult(index, e.target.value)}
+                />
+              </div>
+              {kr.trim() !== '' && (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => handleRemoveKeyResult(index)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          ))}
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-2 w-full"
+            onClick={handleAddKeyResult}
+          >
+            <Plus className="h-4 w-4 mr-1" /> Añadir Key Result
+          </Button>
         </div>
+      </div>
+      
+      <div className="mb-8">
+        <h3 className="text-lg font-semibold mb-3">Iniciativas</h3>
+        <div className="space-y-2">
+          {initiatives.map((initiative, index) => (
+            <div key={index} className="flex items-start space-x-2">
+              <div className="rounded-full bg-yellow-100 p-2 mt-1">
+                <Check className="h-4 w-4 text-yellow-500" />
+              </div>
+              <div className="flex-1">
+                <textarea
+                  className="w-full p-2 border rounded-md resize-none"
+                  rows={2}
+                  placeholder="Añadir Iniciativa..."
+                  value={initiative}
+                  onChange={(e) => handleUpdateInitiative(index, e.target.value)}
+                />
+              </div>
+              {initiative.trim() !== '' && (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => handleRemoveInitiative(index)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          ))}
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-2 w-full"
+            onClick={handleAddInitiative}
+          >
+            <Plus className="h-4 w-4 mr-1" /> Añadir Iniciativa
+          </Button>
+        </div>
+      </div>
+      
+      <div className="flex justify-end space-x-2 mt-6">
+        <Button variant="outline" onClick={onClose}>Cancelar</Button>
+        <Button 
+          variant="default" 
+          className="bg-primary text-white" 
+          onClick={handleCreateWidget}
+        >
+          Añadir al lienzo
+        </Button>
       </div>
     </div>
   );

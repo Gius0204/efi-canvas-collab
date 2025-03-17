@@ -22,7 +22,8 @@ const FodaWidgetComponent: React.FC<FodaWidgetComponentProps> = ({ onClose, onAd
     { id: '2', text: 'Expansión a nuevos mercados internacionales.', type: 'oportunidad', perspective: 'Financiero' },
     { id: '3', text: 'Alta dependencia de un cliente o segmento específico.', type: 'debilidad', perspective: 'Financiero' },
     { id: '4', text: 'Competencia con precios más bajos.', type: 'amenaza', perspective: 'Financiero' },
-    { id: '5', text: 'Alta dependencia de un cliente o segmento específico.', type: 'debilidad', perspective: 'Clientes' }
+    { id: '5', text: 'Aumento de la demanda en el sector objetivo.', type: 'oportunidad', perspective: 'Financiero' },
+    { id: '6', text: 'Alta dependencia de un cliente o segmento específico.', type: 'debilidad', perspective: 'Clientes' }
   ]);
   
   const [newItem, setNewItem] = useState('');
@@ -54,6 +55,15 @@ const FodaWidgetComponent: React.FC<FodaWidgetComponentProps> = ({ onClose, onAd
     if (newPerspective && !perspectives.includes(newPerspective)) {
       setPerspectives([...perspectives, newPerspective]);
       setNewPerspective('');
+      setActivePerspective(newPerspective);
+    }
+  };
+
+  const handleRemovePerspective = (perspective: string) => {
+    if (perspectives.length > 1) {
+      setPerspectives(perspectives.filter(p => p !== perspective));
+      setItems(items.filter(item => item.perspective !== perspective));
+      setActivePerspective(perspectives.filter(p => p !== perspective)[0]);
     }
   };
 
@@ -64,6 +74,48 @@ const FodaWidgetComponent: React.FC<FodaWidgetComponentProps> = ({ onClose, onAd
       items
     });
     onClose();
+  };
+  
+  const handleTypeClick = (type: 'fortaleza' | 'oportunidad' | 'debilidad' | 'amenaza') => {
+    setActiveType(type);
+  };
+
+  const typeLabels = {
+    fortaleza: 'Fortaleza',
+    oportunidad: 'Oportunidad',
+    debilidad: 'Debilidad',
+    amenaza: 'Amenaza'
+  };
+
+  const typeColors = {
+    fortaleza: {
+      bg: 'bg-green-500',
+      bgLight: 'bg-green-100',
+      hoverBg: 'hover:bg-green-200',
+      textPlaceholder: '+ Añadir Fortaleza',
+      icon: '👍'
+    },
+    oportunidad: {
+      bg: 'bg-blue-500',
+      bgLight: 'bg-blue-100',
+      hoverBg: 'hover:bg-blue-200',
+      textPlaceholder: '+ Añadir Oportunidad',
+      icon: '🌍'
+    },
+    debilidad: {
+      bg: 'bg-yellow-500',
+      bgLight: 'bg-yellow-100',
+      hoverBg: 'hover:bg-yellow-200',
+      textPlaceholder: '+ Añadir Debilidad',
+      icon: '⚠️'
+    },
+    amenaza: {
+      bg: 'bg-red-500',
+      bgLight: 'bg-red-100',
+      hoverBg: 'hover:bg-red-200',
+      textPlaceholder: '+ Añadir Amenaza',
+      icon: '❗'
+    }
   };
 
   return (
@@ -82,7 +134,10 @@ const FodaWidgetComponent: React.FC<FodaWidgetComponentProps> = ({ onClose, onAd
               <h3 className="text-md font-semibold mr-4">Perspectivas:</h3>
               <div className="flex flex-wrap gap-2">
                 {perspectives.map(p => (
-                  <div key={p} className="flex items-center bg-gray-100 px-3 py-1 rounded-md">
+                  <div 
+                    key={p} 
+                    className={`flex items-center px-3 py-1 rounded-md ${activePerspective === p ? 'bg-gray-200' : 'bg-gray-100'}`}
+                  >
                     <span 
                       className="text-sm cursor-pointer"
                       onClick={() => setActivePerspective(p)}
@@ -90,7 +145,7 @@ const FodaWidgetComponent: React.FC<FodaWidgetComponentProps> = ({ onClose, onAd
                       {p}
                     </span>
                     <button 
-                      onClick={() => setPerspectives(perspectives.filter(persp => persp !== p))}
+                      onClick={() => handleRemovePerspective(p)}
                       className="ml-2 text-gray-400 hover:text-gray-600"
                     >
                       <X className="h-3 w-3" />
@@ -118,153 +173,44 @@ const FodaWidgetComponent: React.FC<FodaWidgetComponentProps> = ({ onClose, onAd
             </div>
             
             <div className="grid grid-cols-4 gap-3">
-              <div>
-                <div className="bg-green-500 text-white p-2 font-bold text-center rounded-t-md">
-                  Fortalezas
-                </div>
-                {items
-                  .filter(item => item.type === 'fortaleza' && item.perspective === activePerspective)
-                  .map(item => (
-                    <div key={item.id} className="bg-green-100 p-2 mb-2 rounded-md relative group">
-                      <button 
-                        onClick={() => handleRemoveItem(item.id)}
-                        className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                      <div
-                        className="w-full min-h-[40px]"
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={(e) => {
-                          setItems(items.map(i => i.id === item.id ? { ...i, text: e.currentTarget.textContent || '' } : i));
-                        }}
-                      >
-                        {item.text}
+              {(Object.keys(typeLabels) as Array<keyof typeof typeLabels>).map((type) => (
+                <div key={type}>
+                  <div className={`${typeColors[type].bg} text-white p-2 font-bold text-center rounded-t-md`}>
+                    {typeLabels[type]}
+                  </div>
+                  {items
+                    .filter(item => item.type === type && item.perspective === activePerspective)
+                    .map(item => (
+                      <div key={item.id} className={`${typeColors[type].bgLight} p-2 mb-2 rounded-md relative group`}>
+                        <button 
+                          onClick={() => handleRemoveItem(item.id)}
+                          className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                        <div
+                          className="w-full min-h-[40px]"
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={(e) => {
+                            setItems(items.map(i => i.id === item.id ? { ...i, text: e.currentTarget.textContent || '' } : i));
+                          }}
+                        >
+                          {item.text}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                  
-                <div className="mt-2">
-                  <button 
-                    className="flex items-center justify-center w-full p-2 bg-green-100 hover:bg-green-200 rounded-md text-sm"
-                    onClick={() => setActiveType('fortaleza')}
-                  >
-                    <Plus className="h-4 w-4 mr-1" /> Añadir Fortaleza
-                  </button>
+                    ))}
+                    
+                  <div className="mt-2">
+                    <button 
+                      className={`flex items-center justify-center w-full p-2 ${typeColors[type].bgLight} ${typeColors[type].hoverBg} rounded-md text-sm`}
+                      onClick={() => handleTypeClick(type)}
+                    >
+                      <span className="mr-1">{typeColors[type].icon}</span> {typeColors[type].textPlaceholder}
+                    </button>
+                  </div>
                 </div>
-              </div>
-              
-              <div>
-                <div className="bg-blue-500 text-white p-2 font-bold text-center rounded-t-md">
-                  Oportunidades
-                </div>
-                {items
-                  .filter(item => item.type === 'oportunidad' && item.perspective === activePerspective)
-                  .map(item => (
-                    <div key={item.id} className="bg-blue-100 p-2 mb-2 rounded-md relative group">
-                      <button 
-                        onClick={() => handleRemoveItem(item.id)}
-                        className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                      <div
-                        className="w-full min-h-[40px]"
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={(e) => {
-                          setItems(items.map(i => i.id === item.id ? { ...i, text: e.currentTarget.textContent || '' } : i));
-                        }}
-                      >
-                        {item.text}
-                      </div>
-                    </div>
-                  ))}
-                  
-                <div className="mt-2">
-                  <button 
-                    className="flex items-center justify-center w-full p-2 bg-blue-100 hover:bg-blue-200 rounded-md text-sm"
-                    onClick={() => setActiveType('oportunidad')}
-                  >
-                    <Plus className="h-4 w-4 mr-1" /> Añadir Oportunidad
-                  </button>
-                </div>
-              </div>
-              
-              <div>
-                <div className="bg-yellow-500 text-white p-2 font-bold text-center rounded-t-md">
-                  Debilidades
-                </div>
-                {items
-                  .filter(item => item.type === 'debilidad' && item.perspective === activePerspective)
-                  .map(item => (
-                    <div key={item.id} className="bg-yellow-100 p-2 mb-2 rounded-md relative group">
-                      <button 
-                        onClick={() => handleRemoveItem(item.id)}
-                        className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                      <div
-                        className="w-full min-h-[40px]"
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={(e) => {
-                          setItems(items.map(i => i.id === item.id ? { ...i, text: e.currentTarget.textContent || '' } : i));
-                        }}
-                      >
-                        {item.text}
-                      </div>
-                    </div>
-                  ))}
-                  
-                <div className="mt-2">
-                  <button 
-                    className="flex items-center justify-center w-full p-2 bg-yellow-100 hover:bg-yellow-200 rounded-md text-sm"
-                    onClick={() => setActiveType('debilidad')}
-                  >
-                    <Plus className="h-4 w-4 mr-1" /> Añadir Debilidad
-                  </button>
-                </div>
-              </div>
-              
-              <div>
-                <div className="bg-red-500 text-white p-2 font-bold text-center rounded-t-md">
-                  Amenazas
-                </div>
-                {items
-                  .filter(item => item.type === 'amenaza' && item.perspective === activePerspective)
-                  .map(item => (
-                    <div key={item.id} className="bg-red-100 p-2 mb-2 rounded-md relative group">
-                      <button 
-                        onClick={() => handleRemoveItem(item.id)}
-                        className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                      <div
-                        className="w-full min-h-[40px]"
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={(e) => {
-                          setItems(items.map(i => i.id === item.id ? { ...i, text: e.currentTarget.textContent || '' } : i));
-                        }}
-                      >
-                        {item.text}
-                      </div>
-                    </div>
-                  ))}
-                  
-                <div className="mt-2">
-                  <button 
-                    className="flex items-center justify-center w-full p-2 bg-red-100 hover:bg-red-200 rounded-md text-sm"
-                    onClick={() => setActiveType('amenaza')}
-                  >
-                    <Plus className="h-4 w-4 mr-1" /> Añadir Amenaza
-                  </button>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
           
@@ -272,9 +218,7 @@ const FodaWidgetComponent: React.FC<FodaWidgetComponentProps> = ({ onClose, onAd
             <div className="mb-4 p-3 border rounded-md bg-gray-50">
               <div className="mb-2 flex items-center justify-between">
                 <h3 className="text-md font-medium">
-                  Añadir {activeType === 'fortaleza' ? 'Fortaleza' : 
-                          activeType === 'oportunidad' ? 'Oportunidad' : 
-                          activeType === 'debilidad' ? 'Debilidad' : 'Amenaza'} en {activePerspective}
+                  Añadir {typeLabels[activeType]} en {activePerspective}
                 </h3>
                 <Button variant="ghost" size="icon" onClick={() => setActiveType(null)}>
                   <X className="h-4 w-4" />

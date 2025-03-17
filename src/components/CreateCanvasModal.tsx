@@ -48,9 +48,14 @@ const CreateCanvasModal: React.FC<CreateCanvasModalProps> = ({ isOpen, onClose }
 
   const templates = [
     { id: 'foda', name: 'BSC FODA', category: 'estrategia', thumbnail: '/lovable-uploads/4c97b60b-269d-4520-94f2-79ba47293d04.png' },
-    { id: 'okrs', name: 'OKRs', category: 'gestion', thumbnail: '/lovable-uploads/26b3a7d4-8e3d-4e4d-9d23-c7c6a050981d.png' },
+    { id: 'okrs', name: 'OKRs', category: 'estrategia', thumbnail: '/lovable-uploads/26b3a7d4-8e3d-4e4d-9d23-c7c6a050981d.png' },
     { id: 'pestel', name: 'PESTEL', category: 'estrategia', thumbnail: '/lovable-uploads/40097394-44a8-4e3b-a650-4dff0315f093.png' },
     { id: 'mapa', name: 'MAPA ESTRATÉGICO', category: 'estrategia', thumbnail: '/lovable-uploads/e6a590cd-abad-475c-9560-946cd7364af8.png' },
+  ];
+
+  const widgets = [
+    { id: 'foda-widget', name: 'Widget FODA', category: 'widgets', thumbnail: '/lovable-uploads/8bf3774b-aec4-40f1-b295-a28fbd9062e6.png' },
+    { id: 'okrs-widget', name: 'Widget OKRs', category: 'widgets', thumbnail: '/lovable-uploads/f8d90d40-5409-4bde-a4cf-db2e296f7adb.png' },
   ];
 
   const handleBackToOptions = () => {
@@ -77,14 +82,16 @@ const CreateCanvasModal: React.FC<CreateCanvasModalProps> = ({ isOpen, onClose }
   };
 
   const selectedTemplateData = selectedTemplate 
-    ? templates.find(t => t.id === selectedTemplate) 
+    ? [...templates, ...widgets].find(t => t.id === selectedTemplate) 
     : null;
 
-  const filteredTemplates = templates.filter(t => 
+  const filteredTemplates = [...templates, ...widgets].filter(t => 
     (!searchQuery || t.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
     (t.id !== selectedTemplate) && 
     (!selectedTemplate ? (t.category === activeCategory) : (t.category === selectedTemplateData?.category))
   );
+
+  const displayedItems = activeCategory === 'widgets' ? widgets : templates.filter(t => t.category === activeCategory);
 
   return (
     <Dialog open={isOpen} onOpenChange={() => onClose()}>
@@ -178,32 +185,30 @@ const CreateCanvasModal: React.FC<CreateCanvasModalProps> = ({ isOpen, onClose }
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
-                    {templates.filter(t => t.category === activeCategory).map(template => (
-                      <div key={template.id} className="border rounded-md overflow-hidden">
+                    {displayedItems.map(item => (
+                      <div key={item.id} className="border rounded-md overflow-hidden">
                         <div className="h-24 bg-gray-100">
                           <img 
-                            src={template.thumbnail} 
-                            alt={template.name}
+                            src={item.thumbnail} 
+                            alt={item.name}
                             className="w-full h-full object-cover"
                           />
                         </div>
                         <div className="p-2 flex flex-col">
-                          <h3 className="font-medium text-sm mb-2">{template.name}</h3>
+                          <h3 className="font-medium text-sm mb-2">{item.name}</h3>
                           <div className="flex justify-between">
-                            <div className="flex space-x-1">
-                              <Button 
-                                onClick={() => handleCreateWithTemplate(template.id)}
-                                className="bg-primary text-white text-xs px-3 py-1 rounded hover:bg-primary/90"
-                              >
-                                Crear
-                              </Button>
-                              <Button 
-                                onClick={() => handleViewTemplate(template.id)}
-                                className="text-gray-600 hover:text-gray-900 p-1 rounded border bg-white"
-                              >
-                                <Eye className="w-4 h-4" />
-                              </Button>
-                            </div>
+                            <Button 
+                              onClick={() => handleCreateWithTemplate(item.id)}
+                              className="bg-purple-600 hover:bg-purple-700 text-white text-xs px-3 py-1 rounded"
+                            >
+                              Crear
+                            </Button>
+                            <Button 
+                              onClick={() => handleViewTemplate(item.id)}
+                              className="text-gray-600 hover:text-gray-900 p-1 rounded border bg-white"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
                           </div>
                         </div>
                       </div>
@@ -243,7 +248,7 @@ const CreateCanvasModal: React.FC<CreateCanvasModalProps> = ({ isOpen, onClose }
                   
                   <Button 
                     onClick={() => handleCreateWithTemplate(selectedTemplateData.id)}
-                    className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90"
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md"
                   >
                     Usar plantilla
                   </Button>
@@ -272,7 +277,7 @@ const CreateCanvasModal: React.FC<CreateCanvasModalProps> = ({ isOpen, onClose }
                                   e.stopPropagation();
                                   handleCreateWithTemplate(template.id);
                                 }}
-                                className="bg-primary text-white text-xs px-2 py-0.5 w-full rounded"
+                                className="bg-purple-600 hover:bg-purple-700 text-white text-xs px-2 py-0.5 w-full rounded"
                               >
                                 Crear
                               </Button>
