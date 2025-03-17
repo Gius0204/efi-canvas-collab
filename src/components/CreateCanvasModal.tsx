@@ -80,12 +80,6 @@ const CreateCanvasModal: React.FC<CreateCanvasModalProps> = ({ isOpen, onClose }
     <Dialog open={isOpen} onOpenChange={() => onClose()}>
       <DialogContent className="sm:max-w-[600px] p-0">
         <div className="relative">
-          <button 
-            onClick={onClose} 
-            className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100"
-          >
-            <X className="h-5 w-5" />
-          </button>
           
           {!showTemplates && !selectedTemplate && (
             <div className="p-6">
