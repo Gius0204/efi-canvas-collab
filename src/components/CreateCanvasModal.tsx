@@ -175,15 +175,12 @@ const CreateCanvasModal: React.FC<CreateCanvasModalProps> = ({ isOpen, onClose }
                         <div className="p-2 flex flex-col">
                           <h3 className="font-medium text-sm mb-2">{template.name}</h3>
                           <div className="flex justify-between">
-                            <button 
-                              onClick={() => handleCreateWithTemplate(template.id)}
-                              className="bg-primary text-white text-xs px-3 py-1 rounded hover:bg-primary/90"
-                            >
-                              Crear
-                            </button>
                             <div className="flex space-x-1">
-                              <button className="text-gray-600 hover:text-gray-900 text-xs px-3 py-1 rounded border bg-white">
-                                Usar
+                              <button 
+                                onClick={() => handleCreateWithTemplate(template.id)}
+                                className="bg-primary text-white text-xs px-3 py-1 rounded hover:bg-primary/90"
+                              >
+                                Crear
                               </button>
                               <button 
                                 onClick={() => handleViewTemplate(template.id)}
