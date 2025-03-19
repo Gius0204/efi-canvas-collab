@@ -29,6 +29,11 @@ import { useLocation, useParams } from "react-router-dom";
 import FodaWidgetComponent from "./widgets/FodaWidgetComponent";
 import OkrsWidgetComponent from "./widgets/OkrsWidgetComponent";
 
+import { createFodaTemplate } from "./templates/FodaTemplate";
+import { createOkrsTemplate } from "./templates/OkrsTemplate";
+import { createPestelTemplate } from "./templates/PestelTemplate";
+import { createBscMapTemplate } from "./templates/BscMapTemplate";
+
 const Canvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
@@ -129,9 +134,20 @@ const Canvas: React.FC = () => {
 
   useEffect(() => {
     if (fabricCanvas && shouldLoadTemplate && id) {
-      //console.log(`Cargando plantilla con ID: ${id}`);
-      toast.success(`Cargando plantilla ${id}`);
-      createCanvasElements(fabricCanvas);
+      if (id == "foda") {
+        //console.log(`Cargando plantilla con ID: ${id}`);
+        toast.success(`Cargando plantilla ${id}`);
+        createFodaTemplate(fabricCanvas);
+      } else if (id == "okrs") {
+        toast.success(`Cargando plantilla ${id}`);
+        createOkrsTemplate(fabricCanvas);
+      } else if (id == "pestel") {
+        toast.success(`Cargando plantilla ${id}`);
+        createPestelTemplate(fabricCanvas);
+      } else if (id == "mapa") {
+        toast.success(`Cargando plantilla ${id}`);
+        createBscMapTemplate(fabricCanvas);
+      }
     }
   }, [fabricCanvas, shouldLoadTemplate, id]);
 
