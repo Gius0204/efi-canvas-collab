@@ -1,177 +1,179 @@
+import React from "react";
+import { Group, Rect, Textbox } from "fabric";
+import * as fabric from "fabric";
 
-import React from 'react';
-import { Group, Rect, Textbox } from 'fabric';
-import * as fabric from 'fabric';
-
-// Function to create FODA (SWOT) template
+// Function to create an improved FODA (SWOT) template
 export const createFodaTemplate = (fabricCanvas: fabric.Canvas) => {
   if (!fabricCanvas) return;
 
-  const canvasWidth = fabricCanvas.width || 1000;
-  const canvasHeight = fabricCanvas.height || 800;
+  const canvasWidth = fabricCanvas.width || 1100;
+  const canvasHeight = fabricCanvas.height || 770;
   const centerX = canvasWidth / 2;
   const centerY = canvasHeight / 2;
 
-  // Create main section
-  const mainSection = new Rect({
-    left: centerX - 450,
-    top: centerY - 350,
-    width: 900,
-    height: 700,
-    fill: 'rgba(248, 249, 250, 0.5)',
-    stroke: '#cccccc',
-    strokeWidth: 1,
+  // Main container
+  const mainContainer = new Rect({
+    left: centerX - 550,
+    top: centerY - 375,
+    width: 1100,
+    height: 770,
+    fill: "rgba(255, 255, 255, 1)",
+    stroke: "#ccc",
+    strokeWidth: 2,
     rx: 10,
     ry: 10,
   });
 
-  // Main title
-  const mainTitle = new Textbox('FODA AREA MARKETING', {
-    left: centerX - 440,
-    top: centerY - 340,
-    width: 300,
-    fontSize: 18,
-    fontFamily: 'Arial',
-    fontWeight: 'bold',
-    fill: '#333',
+  // Title on the left
+  const mainTitle = new Textbox("FODA AREA MARKETING", {
+    left: centerX - 520,
+    top: centerY - 360,
+    width: 250,
+    fontSize: 14,
+    fontFamily: "Arial",
+    fontWeight: "bold",
+    fill: "#333",
+    backgroundColor: "#f8f9fa",
+    textAlign: "left",
     editable: true,
+    padding: 5,
   });
 
-  // Header rectangles
-  const colors = ['#2ecc71', '#3498db', '#f1c40f', '#e74c3c'];
-  const titles = ['Fortalezas', 'Oportunidades', 'Debilidades', 'Amenazas'];
-  const headerRects = [];
-  const headerTexts = [];
+  const rectTitle = new Rect({
+    left: centerX - 530,
+    top: centerY - 360,
+    width: 200,
+    height: 25,
+    fill: "rgba(128, 128, 128, 0.5)",
+    stroke: "#ccc",
+    strokeWidth: 2,
+    rx: 5,
+    ry: 5,
+  });
+
+  // Headers (Columns)
+  const colors = ["#2ecc71", "#3498db", "#f1c40f", "#e74c3c"];
+  const titles = ["Fortalezas", "Oportunidades", "Debilidades", "Amenazas"];
+  const columnHeaders = [];
 
   for (let i = 0; i < 4; i++) {
     const rect = new Rect({
-      left: centerX - 425 + i * 230,
-      top: centerY - 300,
-      width: 220,
+      left: centerX - 480 + i * 240,
+      top: centerY - 330,
+      width: 230,
       height: 40,
       fill: colors[i],
-      rx: 2,
-      ry: 2,
+      rx: 5,
+      ry: 5,
     });
 
     const text = new Textbox(titles[i], {
-      left: centerX - 415 + i * 230,
-      top: centerY - 290,
-      width: 200,
-      fontSize: 16,
-      fontFamily: 'Arial',
-      fontWeight: 'bold',
-      fill: '#fff',
-      textAlign: 'center',
-      editable: true,
-    });
-
-    headerRects.push(rect);
-    headerTexts.push(text);
-  }
-
-  // Section headers for Financial perspective
-  const perspectives = ['Financiero', 'Clientes', 'Procesos', 'Aprendizaje'];
-  const sectionTitles = perspectives.map(p => ['Fortalezas ' + p, 'Oportunidades ' + p, 'Debilidades ' + p, 'Amenazas ' + p]);
-  const sectionHeaders = [];
-  
-  // Add perspective label on the side
-  const perspectiveText = new Textbox('Financiero', {
-    left: centerX - 440,
-    top: centerY - 230,
-    width: 100,
-    fontSize: 14,
-    fontFamily: 'Arial',
-    fontWeight: 'bold',
-    fill: '#333',
-    angle: 270,
-    editable: true,
-  });
-
-  // Create section headers
-  for (let i = 0; i < 4; i++) {
-    const header = new Textbox(sectionTitles[0][i], {
-      left: centerX - 415 + i * 230,
-      top: centerY - 250,
-      width: 200,
+      left: centerX - 470 + i * 240,
+      top: centerY - 320,
+      width: 210,
       fontSize: 12,
-      fontFamily: 'Arial',
-      fontWeight: 'bold',
-      fill: '#333',
-      backgroundColor: '#f5f5f5',
-      padding: 5,
-      editable: true,
+      fontFamily: "Arial",
+      fontWeight: "bold",
+      fill: "#fff",
+      textAlign: "center",
+      editable: false,
     });
-    sectionHeaders.push(header);
+
+    columnHeaders.push(rect, text);
   }
 
-  // Create sticky notes
-  const stickyNotes = [];
-  const stickyCopy = [
-    ['Alta rentabilidad en los últimos 5 años.', 'Eficiencia en la gestión de costos operativos.', 'Diversificación de fuentes de ingresos.', 'Acceso a financiamiento con tasas competitivas.'],
-    ['Expansión a nuevos mercados internacionales.', 'Aumento de la demanda en el sector objetivo.', 'Programas gubernamentales de subsidio o apoyo.', 'Tendencias hacia la digitalización que reducen costos.'],
-    ['Alta dependencia de un cliente o segmento específico.', 'Estructura de costos fijos elevada.', 'Falta de diversificación en líneas de productos.', 'Liquidez limitada frente a emergencias.'],
-    ['Incremento en costos de materias primas.', 'Cambios en las políticas fiscales que afectan impuestos.', 'Competencia con precios más bajos.', 'Riesgo de fluctuación en el tipo de cambio.']
-  ];
+  // Rows (Perspectives)
+  const perspectives = ["Financiero", "Clientes", "Procesos", "Aprendizaje"];
+  const rowHeaders = [];
+  const sectionContainers = [];
 
-  const stickyColors = ['#dcf9dd', '#d3e4fd', '#fef7cd', '#ffdee2'];
+  for (let i = 0; i < perspectives.length; i++) {
+    const rect = new Rect({
+      left: centerX - 520,
+      top: centerY - 280 + i * 170,
+      width: 30,
+      height: 150,
+      fill: "#fff",
+      stroke: "#ddd",
+      strokeWidth: 1,
+      rx: 5,
+      ry: 5,
+    });
 
-  for (let col = 0; col < 4; col++) {
-    for (let i = 0; i < 4; i++) {
-      const posY = i % 2 === 0 ? -200 + (i * 80) : -200 + (i * 80);
-      const posX = col % 2 === 0 ? -400 + (col * 230) : -400 + (col * 230);
-      
-      const note = new Rect({
-        left: centerX + posX,
-        top: centerY + posY,
-        width: 180,
-        height: 70,
-        fill: stickyColors[col],
-        stroke: 'rgba(0,0,0,0.05)',
+    const text = new Textbox(perspectives[i], {
+      left: centerX - 515,
+      top: centerY - 160 + i * 170,
+      width: 100,
+      fontSize: 14,
+      fontFamily: "Arial",
+      fontWeight: "bold",
+      fill: "#333",
+      textAlign: "center",
+      angle: 270,
+      editable: true,
+    });
+    rowHeaders.push(rect, text);
+
+    for (let j = 0; j < 4; j++) {
+      const section = new Rect({
+        left: centerX - 480 + j * 240,
+        top: centerY - 280 + i * 170,
+        width: 230,
+        height: 150,
+        fill: "#fff",
+        stroke: "#ddd",
         strokeWidth: 1,
-        rx: 2,
-        ry: 2,
-        shadow: new fabric.Shadow({
-          color: 'rgba(0,0,0,0.1)',
-          blur: 3,
-          offsetX: 1,
-          offsetY: 1
-        })
+        rx: 5,
+        ry: 5,
       });
-
-      const noteText = new Textbox(stickyCopy[col][i], {
-        left: centerX + posX + 5,
-        top: centerY + posY + 5,
-        width: 170,
-        fontSize: 12,
-        fontFamily: 'Arial',
-        fill: 'rgba(0,0,0,0.8)',
-        editable: true,
-      });
-      
-      // Group the sticky note and its text
-      const stickyGroup = new Group([note, noteText], {
-        left: centerX + posX,
-        top: centerY + posY,
-        cornerSize: 6,
-        transparentCorners: false,
-        cornerColor: '#0075ff',
-        borderColor: '#0075ff'
-      });
-      
-      stickyNotes.push(stickyGroup);
+      sectionContainers.push(section);
     }
   }
 
-  // Add all elements to canvas
-  fabricCanvas.add(mainSection);
-  fabricCanvas.add(mainTitle);
-  headerRects.forEach(rect => fabricCanvas.add(rect));
-  headerTexts.forEach(text => fabricCanvas.add(text));
-  fabricCanvas.add(perspectiveText);
-  sectionHeaders.forEach(header => fabricCanvas.add(header));
-  stickyNotes.forEach(note => fabricCanvas.add(note));
+  // Sticky Notes Data
+  const stickyColors = ["#dcf9dd", "#d3e4fd", "#fef7cd", "#ffdee2"];
+  const stickyNotes = [];
 
-  // Make sure everything is rendered
+  for (let row = 0; row < perspectives.length; row++) {
+    for (let col = 0; col < 4; col++) {
+      for (let i = 0; i < 4; i++) {
+        const posX = centerX - 460 + col * 240 + (i % 2) * 100;
+        const posY = centerY - 260 + row * 170 + Math.floor(i / 2) * 60;
+
+        const note = new Rect({
+          left: posX,
+          top: posY,
+          width: 90,
+          height: 55,
+          fill: stickyColors[col],
+          rx: 2,
+          ry: 2,
+        });
+
+        const noteText = new Textbox("Nota editable", {
+          left: posX + 5,
+          top: posY + 5,
+          width: 80,
+          fontSize: 10,
+          textAlign: "center",
+          editable: true,
+        });
+
+        const stickyGroup = new Group([note, noteText]);
+        stickyNotes.push(stickyGroup);
+      }
+    }
+  }
+
+  // Add elements to canvas
+  fabricCanvas.add(mainContainer);
+  fabricCanvas.add(mainTitle);
+  fabricCanvas.add(rectTitle);
+
+  columnHeaders.forEach((el) => fabricCanvas.add(el));
+  rowHeaders.forEach((el) => fabricCanvas.add(el));
+  sectionContainers.forEach((el) => fabricCanvas.add(el));
+  stickyNotes.forEach((el) => fabricCanvas.add(el));
+
   fabricCanvas.renderAll();
 };
